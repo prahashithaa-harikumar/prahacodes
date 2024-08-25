@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standard Chartered</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .nav-link {
+            color: #555;
+        }
+        .nav-link.active {
+            color: green;
+        }
+        .articles {
+            display: flex;
+            justify-content: space-between;
+        }
+        .article {
+            text-align: center;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .article img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .article h5 {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        .article p {
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-6">
+                <a href="#">
+                    <img src="home-logo.png" alt="Home" class="img-fluid">
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                <a href="#">
+                    <img src="login.png" alt="Login" class="img-fluid">
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav justify-content-center">
+            <a class="nav-link active" href="#">Home</a>
+            <a class="nav-link" href="#">You're in India</a>
+            <a class="nav-link" href="#">Our Products</a>
+            <a class="nav-link" href="#">Promotions</a>
+            <a class="nav-link" href="#">Services</a>
+            <a class="nav-link" href="#">Help</a>
+        </nav>
+
+        <div class="text-center py-5">
+            <h1>Welcome to Standard Chartered</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 article">
+                <a href="article1.html">
+                    <img src="article1.png" alt="Article 1">
+                    <h5>Combating the illegal wildlife trade</h5>
+                    <p>See how we work with partners...</p>
+                </a>
+            </div>
+            <div class="col-md-2 article">
+                <a href="article2.html">
+                    <img src="article2.png" alt="Article 2">
+                    <h5>Invest like you never left India</h5>
+                    <p>Helping you stay on top with NRI...</p>
+                </a>
+            </div>
+            <div class="col-md-2 article">
+                <a href="article3.html">
+                    <img src="article3.png" alt="Article 3">
+                    <h5>Explore the world like a local #PayLikeALocal</h5>
+                    <p>Load up to 20 currencies...</p>
+                </a>
+            </div>
+            <div class="col-md-2 article">
+                <a href="article4.html">
+                    <img src="article4.png" alt="Article 4">
+                    <h5>SC Edge app - Exclusive for salary accounts</h5>
+                    <p>One app for travel, dining...</p>
+                </a>
+            </div>
+            <div class="col-md-2 article">
+                <a href="article5.html">
+                    <img src="article5.png" alt="Article 5">
+                    <h5>Get 5% cashback at supermarket</h5>
+                    <p>With Manhattan Platinum credit card...</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+</body>
+</html>
