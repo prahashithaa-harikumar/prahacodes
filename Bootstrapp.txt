@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standard Chartered</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        .navbar {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .nav-link {
+            color: black !important;
+        }
+
+        /* Article Section with Background Image */
+        .article-section {
+            background-image: url('path-to-your-background-image.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .article-card {
+            border: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            height: 100%;
+        }
+
+        .article-img {
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .article-text {
+            font-size: 14px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            margin-right: 10px;
+        }
+
+        .scb-logo {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            height: 50px;
+        }
+
+        .icon img {
+            height: 40px;
+        }
+
+        /* Make sure articles cover the entire vertical space */
+        .row-eq-height {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-lg-3,
+        .col-md-6 {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">
+            <img src="home-icon.png" alt="Home">
+        </a>
+        <a class="navbar-brand" href="#">
+            <img src="scb-logo.png" alt="SCB Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">You're in India</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Our Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Promotions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Help</a>
+                </li>
+                <li class="nav-item icon">
+                    <a href="#"><img src="login-icon.png" alt="Login"></a>
+                </li>
+            </ul>
+        </div>
+        <img src="scb-logo.png" alt="SCB Logo" class="scb-logo">
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-5">Welcome to Standard Chartered</h2>
+        <div class="row row-eq-height article-section">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card article-card">
+                    <a href="#">
+                        <img src="article1.jpg" class="card-img-top article-img" alt="Article 1">
+                    </a>
+                    <div class="card-body article-text">
+                        <h5 class="card-title">Combating the illegal wildlife trade</h5>
+                        <p class="card-text">See how we work with partners...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card article-card">
+                    <a href="#">
+                        <img src="article2.jpg" class="card-img-top article-img" alt="Article 2">
+                    </a>
+                    <div class="card-body article-text">
+                        <h5 class="card-title">Invest like you never left India</h5>
+                        <p class="card-text">Helping you stay on top with NRI...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card article-card">
+                    <a href="#">
+                        <img src="article3.jpg" class="card-img-top article-img" alt="Article 3">
+                    </a>
+                    <div class="card-body article-text">
+                        <h5 class="card-title">Explore the world like a local #PayLikeALocal</h5>
+                        <p class="card-text">Load up to 20 currencies...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card article-card">
+                    <a href="#">
+                        <img src="article4.jpg" class="card-img-top article-img" alt="Article 4">
+                    </a>
+                    <div class="card-body article-text">
+                        <h5 class="card-title">SC Edge app - Exclusive for salary accounts</h5>
+                        <p class="card-text">One app for travel, dining...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card article-card">
+                    <a href="#">
+                        <img src="article5.jpg" class="card-img-top article-img" alt="Article 5">
+                    </a>
+                    <div class="card-body article-text">
+                        <h5 class="card-title">Get 5% cashback at supermarket</h5>
+                        <p class="card-text">With Manhattan Platinum credit card...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
