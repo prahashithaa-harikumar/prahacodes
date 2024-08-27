@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Add Testimonial</h2>
+    <form id="testimonialForm">
+        <div class="form-group">
+            <label for="testimonialName">Name:</label>
+            <input type="text" class="form-control" id="testimonialName" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+            <label for="testimonialMessage">Message:</label>
+            <textarea class="form-control" id="testimonialMessage" placeholder="Enter your Message"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <h3 class="mt-5">Testimonials</h3>
+    <div id="testimonialsList">
+    </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('testimonialForm');
+        const testimonialsList = document.getElementById('testimonialsList');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('testimonialName').value;
+            const message = document.getElementById('testimonialMessage').value;
+            
+            if (name && message) {
+                const testimonialDiv = document.createElement('div');
+                testimonialDiv.className = 'card mt-3';
+                testimonialDiv.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">${name}</h5>
+                        <p class="card-text">${message}</p>
+                        <button class="btn btn-warning btn-edit">Edit</button>
+                        <button class="btn btn-danger btn-delete">Delete</button>
+                    </div>
+                `;
+                
+                testimonialsList.appendChild(testimonialDiv);
+                form.reset();
+            }
+        });
+
+        testimonialsList.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-delete')) {
+                const card = e.target.closest('.card');
+                if (card) {
+                    card.remove();
+                }
+            }
+
+            if (e.target.classList.contains('btn-edit')) {
+                const card = e.target.closest('.card');
+                if (card) {
+                    const name = card.querySelector('.card-title').textContent;
+                    const message = card.querySelector('.card-text').textContent;
+                    
+                    document.getElementById('testimonialName').value = name;
+                    document.getElementById('testimonialMessage').value = message;
+                    card.remove();
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
