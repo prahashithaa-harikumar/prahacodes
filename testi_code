@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Add Testimonial</h2>
+    <form id="testimonialForm">
+        <div class="form-group">
+            <label for="testimonialName">Name:</label>
+            <input type="text" class="form-control" id="testimonialName" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+            <label for="testimonialMessage">Message:</label>
+            <textarea class="form-control" id="testimonialMessage" placeholder="Enter your Message"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <h3 class="mt-5">Testimonials</h3>
+    <div id="testimonialsList"></div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    class Testimonial {
+        constructor(name, message) {
+            this.name = name;
+            this.message = message;
+        }
+
+        render() {
+            const testimonialDiv = document.createElement('div');
+            testimonialDiv.className = 'card mt-3';
+            testimonialDiv.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${this.name}</h5>
+                    <p class="card-text">${this.message}</p>
+                    <button class="btn btn-warning btn-edit">Edit</button>
+                    <button class="btn btn-danger btn-delete">Delete</button>
+                </div>
+            `;
+            return testimonialDiv;
+        }
+    }
+
+    class TestimonialManager {
+        constructor(formId, listId) {
+            this.form = document.getElementById(formId);
+            this.testimonialsList = document.getElementById(listId);
+            this.initialize();
+        }
+
+        initialize() {
+            this.form.addEventListener('submit', (e) => this.addTestimonial(e));
+            this.testimonialsList.addEventListener('click', (e) => this.handleListClick(e));
+        }
+
+        addTestimonial(e) {
+            e.preventDefault();
+            const name = document.getElementById('testimonialName').value;
+            const message = document.getElementById('testimonialMessage').value;
+
+            if (name && message) {
+                const testimonial = new Testimonial(name, message);
+                this.testimonialsList.appendChild(testimonial.render());
+                this.form.reset();
+            }
+        }
+
+        handleListClick(e) {
+            if (e.target.classList.contains('btn-delete')) {
+                const card = e.target.closest('.card');
+                if (card) {
+                    card.remove();
+                }
+            }
+
+            if (e.target.classList.contains('btn-edit')) {
+                const card = e.target.closest('.card');
+                if (card) {
+                    const name = card.querySelector('.card-title').textContent;
+                    const message = card.querySelector('.card-text').textContent;
+
+                    document.getElementById('testimonialName').value = name;
+                    document.getElementById('testimonialMessage').value = message;
+                    card.remove();
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        new TestimonialManager('testimonialForm', 'testimonialsList');
+    });
+</script>
+</body>
+</html>
