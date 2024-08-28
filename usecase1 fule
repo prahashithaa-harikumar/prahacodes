@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Add Customer</h2>
+    <form id="customerForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter Name">
+            <span class="error" id="nameError"></span>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Id:</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter Email">
+            <span class="error" id="emailError"></span>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact No:</label>
+            <input type="text" class="form-control" id="contact" placeholder="Enter Contact No">
+            <span class="error" id="contactError"></span>
+        </div>
+        <div class="form-group">
+            <label for="accountType">Account Type:</label>
+            <select class="form-control" id="accountType">
+                <option value="">Select account type</option>
+                <option value="savings">Savings</option>
+                <option value="current">Current</option>
+            </select>
+            <span class="error" id="accountTypeError"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Customer</button>
+    </form>
+    <h3 class="mt-5">Customer List</h3>
+    <table class="table table-bordered mt-3" id="customerTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Account Type</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    class Customer {
+        constructor(name, email, contact, accountType) {
+            this.name = name;
+            this.email = email;
+            this.contact = contact;
+            this.accountType = accountType;
+        }
+
+        render() {
+            return `<tr>
+                        <td>${this.name}</td>
+                        <td>${this.email}</td>
+                        <td>${this.contact}</td>
+                        <td>${this.accountType}</td>
+                    </tr>`;
+        }
+    }
+
+    class CustomerManager {
+        constructor(formId, tableBodySelector) {
+            this.form = document.getElementById(formId);
+            this.tableBody = document.querySelector(tableBodySelector);
+            this.initialize();
+        }
+
+        initialize() {
+            this.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+        }
+
+        handleFormSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const contact = document.getElementById('contact').value;
+            const accountType = document.getElementById('accountType').value;
+
+            this.clearErrors();
+
+            if (this.validateInputs(name, email, contact, accountType)) {
+                const customer = new Customer(name, email, contact, accountType);
+                this.tableBody.innerHTML += customer.render();
+                this.form.reset();
+            }
+        }
+
+        clearErrors() {
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('contactError').textContent = '';
+            document.getElementById('accountTypeError').textContent = '';
+        }
+
+        validateInputs(name, email, contact, accountType) {
+            let isValid = true;
+
+            if (!/^[A-Za-z]+$/.test(name)) {
+                document.getElementById('nameError').textContent = 'Please enter only alphabets';
+                isValid = false;
+            }
+
+            if (!/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email id';
+                isValid = false;
+            }
+
+            if (!/^[7-9][0-9]{9}$/.test(contact)) {
+                document.getElementById('contactError').textContent = 'Please enter a valid 10-digit contact number starting with 7, 8, or 9';
+                isValid = false;
+            }
+
+            if (accountType === '') {
+                document.getElementById('accountTypeError').textContent = 'Please select an account type';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        new CustomerManager('customerForm', '#customerTable tbody');
+    });
+</script>
+</body>
+</html>
