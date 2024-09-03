@@ -1,0 +1,231 @@
+import React, { useState } from 'react';
+
+const CustomerApplicationForm = () => {
+  const [customerType, setCustomerType] = useState('');
+  const [formData, setFormData] = useState({
+    bankAccountId: '',
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: 'Silver',
+    idProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+  };
+
+  const handleSave = () => {
+    // Simulate successful file save action
+    alert('Files saved successfully!');
+  };
+
+  const handleSubmit = () => {
+    // Format data as text
+    const dataText = `
+      Customer Type: ${customerType}
+      ${customerType === 'existing' ? `Bank Account ID: ${formData.bankAccountId}` : ''}
+      ${customerType === 'new' ? `Full Name: ${formData.fullName}` : ''}
+      ${customerType === 'new' ? `Date of Birth: ${formData.dob}` : ''}
+      ${customerType === 'new' ? `Address: ${formData.address}` : ''}
+      ${customerType === 'new' ? `Contact Number: ${formData.contactNumber}` : ''}
+      ${customerType === 'new' ? `Aadhar Number: ${formData.aadharNumber}` : ''}
+      ${customerType === 'new' ? `PAN Card Number: ${formData.panCardNumber}` : ''}
+      ${customerType === 'new' ? `Email: ${formData.email}` : ''}
+      ${customerType === 'new' ? `Monthly Income: ${formData.monthlyIncome}` : ''}
+      Product: ${formData.product}
+    `;
+
+    // Create a text file and download it
+    const blob = new Blob([dataText], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'customer_application_data.txt';
+    link.click();
+
+    alert('Customer data submitted successfully and saved as a text file!');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-semibold mb-6 text-center">CC Application Form</h1>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">Is Customer New or Existing?</label>
+        <select
+          name="customerType"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+          value={customerType}
+          onChange={(e) => setCustomerType(e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="new">New</option>
+          <option value="existing">Existing</option>
+        </select>
+      </div>
+
+      {customerType === 'existing' && (
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">Bank Account ID</label>
+          <input
+            type="text"
+            name="bankAccountId"
+            value={formData.bankAccountId}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+          />
+        </div>
+      )}
+
+      {customerType === 'new' && (
+        <>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Address</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Contact Number</label>
+            <input
+              type="text"
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Aadhar Number</label>
+            <input
+              type="text"
+              name="aadharNumber"
+              value={formData.aadharNumber}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">PAN Card Number</label>
+            <input
+              type="text"
+              name="panCardNumber"
+              value={formData.panCardNumber}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Monthly Income</label>
+            <input
+              type="number"
+              name="monthlyIncome"
+              value={formData.monthlyIncome}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">Product</label>
+        <select
+          name="product"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+          value={formData.product}
+          onChange={handleInputChange}
+        >
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">ID Proof (Passport)</label>
+        <input
+          type="file"
+          name="idProofFile"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">Aadhar (PDF or Image)</label>
+        <input
+          type="file"
+          name="aadharFile"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">PAN Card (PDF or Image)</label>
+        <input
+          type="file"
+          name="panCardFile"
+          onChange={handleFileChange}
+          className="w-full
