@@ -1,0 +1,13 @@
+import React from 'react';
+import CustomerApplicationForm from './CustomerApplicationForm';
+import './index.css'; // Make sure this is included to apply Tailwind styles
+
+function App() {
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <CustomerApplicationForm />
+    </div>
+  );
+}
+
+export default App;
