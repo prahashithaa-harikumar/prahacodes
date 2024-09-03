@@ -1,0 +1,262 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const CustomerApplicationForm = () => {
+  const [customerType, setCustomerType] = useState('');
+  const [formData, setFormData] = useState({
+    bankAccountId: '',
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: 'Silver',
+    idProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
+    profile: 'New',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+  };
+
+  const handleSubmit = async () => {
+    const formDataObj = new FormData();
+
+    // Append all form fields to FormData
+    Object.keys(formData).forEach((key) => {
+      formDataObj.append(key, formData[key]);
+    });
+
+    try {
+      await axios.post('http://localhost:5000/api/customer', formDataObj);
+      alert('Customer data submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      alert('Failed to submit customer data.');
+    }
+  };
+
+  const handleSave = async () => {
+    const formDataObj = new FormData();
+    formDataObj.append('aadharFile', formData.aadharFile);
+    formDataObj.append('panCardFile', formData.panCardFile);
+    formDataObj.append('idProofFile', formData.idProofFile);
+
+    try {
+      await axios.post('http://localhost:5000/api/document', formDataObj);
+      alert('Documents saved successfully!');
+    } catch (error) {
+      console.error('Error saving documents:', error);
+      alert('Failed to save documents.');
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-4">CC Application Form</h1>
+
+      <div className="mb-4">
+        <label className="block text-gray-700">Is Customer New or Existing?</label>
+        <select
+          name="customerType"
+          className="w-full p-2 border border-gray-300 rounded mt-2"
+          value={customerType}
+          onChange={(e) => setCustomerType(e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="new">New</option>
+          <option value="existing">Existing</option>
+        </select>
+      </div>
+
+      {customerType === 'existing' && (
+        <div className="mb-4">
+          <label className="block text-gray-700">Bank Account ID</label>
+          <input
+            type="text"
+            name="bankAccountId"
+            value={formData.bankAccountId}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded mt-2"
+          />
+        </div>
+      )}
+
+      {customerType === 'new' && (
+        <>
+          <div className="mb-4">
+            <label className="block text-gray-700">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Address</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Contact Number</label>
+            <input
+              type="text"
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Aadhar Number</label>
+            <input
+              type="text"
+              name="aadharNumber"
+              value={formData.aadharNumber}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">PAN Card Number</label>
+            <input
+              type="text"
+              name="panCardNumber"
+              value={formData.panCardNumber}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Monthly Income</label>
+            <input
+              type="number"
+              name="monthlyIncome"
+              value={formData.monthlyIncome}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="mb-4">
+        <label className="block text-gray-700">Product</label>
+        <select
+          name="product"
+          className="w-full p-2 border border-gray-300 rounded mt-2"
+          value={formData.product}
+          onChange={handleInputChange}
+        >
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700">ID Proof (Passport)</label>
+        <input
+          type="file"
+          name="idProofFile"
+          onChange={handleFileChange}
+          className="w-full p-2 border border-gray-300 rounded mt-2"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700">Aadhar (PDF or Image)</label>
+        <input
+          type="file"
+          name="aadharFile"
+          onChange={handleFileChange}
+          className="w-full p-2 border border-gray-300 rounded mt-2"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700">PAN Card (PDF or Image)</label>
+        <input
+          type="file"
+          name="panCardFile"
+          onChange={handleFileChange}
+          className="w-full p-2 border border-gray-300 rounded mt-2"
+        />
+      </div>
+
+      <div className="flex space-x-4">
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Submit
+        </button>
+        <button
+          onClick={handleSave}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          Save
+        </button>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CustomerApplicationForm;
