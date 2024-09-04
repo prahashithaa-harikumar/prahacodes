@@ -1,0 +1,104 @@
+{customerType === 'existing' && (
+  <>
+    <FormControl isInvalid={!!errors.bankAccountId} mb={4}>
+      <FormLabel>Bank Account ID</FormLabel>
+      <Input
+        name="bankAccountId"
+        value={formData.bankAccountId}
+        onChange={(e) => {
+          handleInputChange(e);
+          // Auto-populate the form with default data for existing customers
+          if (e.target.value) {
+            setFormData({
+              ...formData,
+              fullName: 'John Doe',
+              dob: '1990-01-01',
+              address: '123 Main St, City, Country',
+              contactNumber: '9876543210',
+              aadharNumber: '123412341234',
+              panCardNumber: 'ABCDE1234F',
+              email: 'johndoe@example.com',
+              monthlyIncome: '50000',
+            });
+          }
+        }}
+      />
+      <FormErrorMessage>{errors.bankAccountId}</FormErrorMessage>
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Full Name</FormLabel>
+      <Input
+        name="fullName"
+        value={formData.fullName}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Date of Birth</FormLabel>
+      <Input
+        type="date"
+        name="dob"
+        value={formData.dob}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Address</FormLabel>
+      <Input
+        name="address"
+        value={formData.address}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Contact Number</FormLabel>
+      <Input
+        name="contactNumber"
+        value={formData.contactNumber}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Aadhar Number</FormLabel>
+      <Input
+        name="aadharNumber"
+        value={formData.aadharNumber}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>PAN Card Number</FormLabel>
+      <Input
+        name="panCardNumber"
+        value={formData.panCardNumber}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Email</FormLabel>
+      <Input
+        type="email"
+        name="email"
+        value={formData.email}
+        isReadOnly
+      />
+    </FormControl>
+
+    <FormControl mb={4}>
+      <FormLabel>Monthly Income</FormLabel>
+      <Input
+        type="number"
+        name="monthlyIncome"
+        value={formData.monthlyIncome}
+        isReadOnly
+      />
+    </FormControl>
+  </>
+)}
