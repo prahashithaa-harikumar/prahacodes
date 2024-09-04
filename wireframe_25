@@ -1,0 +1,344 @@
+import React, { useState } from 'react';
+import {
+  Container,
+  Box,
+  Heading,
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Select,
+  Button,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+
+const CustomerApplicationForm = () => {
+  const [customerType, setCustomerType] = useState('');
+  const [formData, setFormData] = useState({
+    bankAccountId: '',
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: 'Silver',
+    idProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
+    profile: 'New',
+  });
+
+  const [errors, setErrors] = useState({});
+  const toast = useToast();
+
+  const validate = () => {
+    const newErrors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const aadharPattern = /^\d{12}$/;
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    const contactNumberPattern = /^\d{10}$/;
+
+    if (!customerType) newErrors.customerType = 'Customer Type is required';
+    if (customerType === 'existing' && !formData.bankAccountId)
+      newErrors.bankAccountId = 'Bank Account ID is required';
+
+    if (customerType === 'new') {
+      if (!formData.fullName) newErrors.fullName = 'Full Name is required';
+      if (!formData.dob) newErrors.dob = 'Date of Birth is required';
+      if (!formData.address) newErrors.address = 'Address is required';
+      if (!formData.contactNumber) {
+        newErrors.contactNumber = 'Contact Number is required';
+      } else if (!contactNumberPattern.test(formData.contactNumber)) {
+        newErrors.contactNumber = 'Contact Number must be 10 digits';
+      }
+      if (!formData.aadharNumber) {
+        newErrors.aadharNumber = 'Aadhar Number is required';
+      } else if (!aadharPattern.test(formData.aadharNumber)) {
+        newErrors.aadharNumber = 'Aadhar Number must be 12 digits';
+      }
+      if (!formData.panCardNumber) {
+        newErrors.panCardNumber = 'PAN Card Number is required';
+      } else if (!panPattern.test(formData.panCardNumber)) {
+        newErrors.panCardNumber = 'PAN Card Number is invalid';
+      }
+      if (!formData.email) {
+        newErrors.email = 'Email is required';
+      } else if (!emailPattern.test(formData.email)) {
+        newErrors.email = 'Email is invalid';
+      }
+      if (!formData.monthlyIncome) newErrors.monthlyIncome = 'Monthly Income is required';
+    }
+
+    if (!formData.idProofFile) newErrors.idProofFile = 'ID Proof is required';
+    if (!formData.aadharFile) newErrors.aadharFile = 'Aadhar file is required';
+    if (!formData.panCardFile) newErrors.panCardFile = 'PAN Card file is required';
+
+    return newErrors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleSubmit = () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast({
+        title: 'Error',
+        description: 'Please fix the errors in the form.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    toast({
+      title: 'Success',
+      description: 'Customer data submitted successfully!',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const handleSave = () => {
+    const textData = `
+      Customer Type: ${customerType}
+      Bank Account ID: ${formData.bankAccountId}
+      Full Name: ${formData.fullName}
+      Date of Birth: ${formData.dob}
+      Address: ${formData.address}
+      Contact Number: ${formData.contactNumber}
+      Aadhar Number: ${formData.aadharNumber}
+      PAN Card Number: ${formData.panCardNumber}
+      Email: ${formData.email}
+      Monthly Income: ${formData.monthlyIncome}
+      Product: ${formData.product}
+    `;
+
+    const blob = new Blob([textData], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'CustomerApplication.txt';
+    link.click();
+  };
+
+  return (
+    <Container maxW="md" p={4}>
+      <Heading as="h2" mb={6}>CC Application Form</Heading>
+
+      <FormControl isInvalid={!!errors.customerType} mb={4}>
+        <FormLabel>Is Customer New or Existing?</FormLabel>
+        <Select
+          name="customerType"
+          value={customerType}
+          onChange={(e) => setCustomerType(e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="new">New</option>
+          <option value="existing">Existing</option>
+        </Select>
+        <FormErrorMessage>{errors.customerType}</FormErrorMessage>
+      </FormControl>
+
+      {customerType === 'existing' && (
+        <FormControl isInvalid={!!errors.bankAccountId} mb={4}>
+          <FormLabel>Bank Account ID</FormLabel>
+          <Input
+            name="bankAccountId"
+            value={formData.bankAccountId}
+            onChange={handleInputChange}
+          />
+          <FormErrorMessage>{errors.bankAccountId}</FormErrorMessage>
+        </FormControl>
+      )}
+
+      {customerType === 'new' && (
+        <>
+          <FormControl isInvalid={!!errors.fullName} mb={4}>
+            <FormLabel>Full Name</FormLabel>
+            <Input
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.dob} mb={4}>
+            <FormLabel>Date of Birth</FormLabel>
+            <Input
+              name="dob"
+              type="date"
+              value={formData.dob}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.dob}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.address} mb={4}>
+            <FormLabel>Address</FormLabel>
+            <Input
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.address}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.contactNumber} mb={4}>
+            <FormLabel>Contact Number</FormLabel>
+            <Input
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.aadharNumber} mb={4}>
+            <FormLabel>Aadhar Number</FormLabel>
+            <Input
+              name="aadharNumber"
+              value={formData.aadharNumber}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.panCardNumber} mb={4}>
+            <FormLabel>PAN Card Number</FormLabel>
+            <Input
+              name="panCardNumber"
+              value={formData.panCardNumber}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.email} mb={4}>
+            <FormLabel>Email</FormLabel>
+            <Input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.monthlyIncome} mb={4}>
+            <FormLabel>Monthly Income</FormLabel>
+            <Input
+              name="monthlyIncome"
+              type="number"
+              value={formData.monthlyIncome}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
+          </FormControl>
+        </>
+      )}
+
+           <FormControl mb={4}>
+        <FormLabel>Product</FormLabel>
+        <Select
+          name="product"
+          value={formData.product}
+          onChange={handleInputChange}
+        >
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
+        </Select>
+      </FormControl>
+
+      <Box mb={4}>
+        <Input
+          accept=".pdf,.jpg,.jpeg,.png"
+          style={{ display: 'none' }}
+          id="idProofFile"
+          type="file"
+          name="idProofFile"
+          onChange={handleFileChange}
+        />
+        <label htmlFor="idProofFile">
+          <Button as="span" colorScheme="teal" width="full">
+            Upload ID Proof (Passport)
+          </Button>
+        </label>
+        {errors.idProofFile && <Text color="red.500">{errors.idProofFile}</Text>}
+      </Box>
+
+      <Box mb={4}>
+        <Input
+          accept=".pdf,.jpg,.jpeg,.png"
+          style={{ display: 'none' }}
+          id="aadharFile"
+          type="file"
+          name="aadharFile"
+          onChange={handleFileChange}
+        />
+        <label htmlFor="aadharFile">
+          <Button as="span" colorScheme="teal" width="full">
+            Upload Aadhar Card
+          </Button>
+        </label>
+        {errors.aadharFile && <Text color="red.500">{errors.aadharFile}</Text>}
+      </Box>
+
+      <Box mb={4}>
+        <Input
+          accept=".pdf,.jpg,.jpeg,.png"
+          style={{ display: 'none' }}
+          id="panCardFile"
+          type="file"
+          name="panCardFile"
+          onChange={handleFileChange}
+        />
+        <label htmlFor="panCardFile">
+          <Button as="span" colorScheme="teal" width="full">
+            Upload PAN Card
+          </Button>
+        </label>
+        {errors.panCardFile && <Text color="red.500">{errors.panCardFile}</Text>}
+      </Box>
+
+      <Box mt={4} display="flex" justifyContent="space-between">
+        <Button colorScheme="blue" onClick={handleSubmit}>
+          Submit
+        </Button>
+        <Button variant="outline" colorScheme="blue" onClick={handleSave}>
+          Save as Text
+        </Button>
+      </Box>
+    </Container>
+  );
+};
+
+export default CustomerApplicationForm;
