@@ -1,0 +1,417 @@
+import React, { useState } from 'react';
+import {
+  Container,
+  Box,
+  Heading,
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Select,
+  Button,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+
+const CustomerApplicationForm = () => {
+  const [customerType, setCustomerType] = useState('');
+  const [formData, setFormData] = useState({
+    bankAccountId: '',
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: 'Silver',
+    idProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
+    profile: 'New',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [selectedProductDetails, setSelectedProductDetails] = useState(null);
+  const toast = useToast();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleProductChange = (e) => {
+    const selectedProduct = e.target.value;
+    setFormData({ ...formData, product: selectedProduct });
+
+    const productDetails = {
+      Silver: {
+        brand: 'Brand A',
+        usage: 'General Usage',
+        affiliation: 'None',
+        cardType: 'Credit Card',
+        cardLimit: '50,000 INR',
+        validUpto: '12/2025',
+        transferAmount: '10,000 INR',
+        balanceTransfer: 'Yes',
+        effectiveRate: '1.5%',
+      },
+      Gold: {
+        brand: 'Brand B',
+        usage: 'Premium Usage',
+        affiliation: 'XYZ Corp',
+        cardType: 'Credit Card',
+        cardLimit: '1,00,000 INR',
+        validUpto: '12/2026',
+        transferAmount: '20,000 INR',
+        balanceTransfer: 'Yes',
+        effectiveRate: '1.2%',
+      },
+      Platinum: {
+        brand: 'Brand C',
+        usage: 'Exclusive Usage',
+        affiliation: 'ABC Corp',
+        cardType: 'Credit Card',
+        cardLimit: '2,00,000 INR',
+        validUpto: '12/2027',
+        transferAmount: '50,000 INR',
+        balanceTransfer: 'Yes',
+        effectiveRate: '1.0%',
+      },
+    };
+
+    setSelectedProductDetails(productDetails[selectedProduct]);
+  };
+
+  const handleSubmit = () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast({
+        title: 'Error',
+        description: 'Please fix the errors in the form.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success',
+      description: 'Customer data submitted successfully!',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const handleSave = () => {
+    const textData = `
+      Customer Type: ${customerType}
+      Bank Account ID: ${formData.bankAccountId}
+      Full Name: ${formData.fullName}
+      Date of Birth: ${formData.dob}
+      Address: ${formData.address}
+      Contact Number: ${formData.contactNumber}
+      Aadhar Number: ${formData.aadharNumber}
+      PAN Card Number: ${formData.panCardNumber}
+      Email: ${formData.email}
+      Monthly Income: ${formData.monthlyIncome}
+      Product: ${formData.product}
+    `;
+
+    const blob = new Blob([textData], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'CustomerApplication.txt';
+    link.click();
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      bankAccountId: '',
+      fullName: '',
+      dob: '',
+      address: '',
+      contactNumber: '',
+      aadharNumber: '',
+      panCardNumber: '',
+      email: '',
+      monthlyIncome: '',
+      product: 'Silver',
+      idProofFile: null,
+      aadharFile: null,
+      panCardFile: null,
+      profile: 'New',
+    });
+    setCustomerType('');
+    setSelectedProductDetails(null);
+    setErrors({});
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const aadharPattern = /^\d{12}$/;
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    const contactNumberPattern = /^\d{10}$/;
+
+    if (!customerType) newErrors.customerType = 'Customer Type is required';
+    if (customerType === 'existing' && !formData.bankAccountId)
+      newErrors.bankAccountId = 'Bank Account ID is required';
+
+    if (customerType === 'new') {
+      if (!formData.fullName) newErrors.fullName = 'Full Name is required';
+      if (!formData.dob) newErrors.dob = 'Date of Birth is required';
+      if (!formData.address) newErrors.address = 'Address is required';
+      if (!formData.contactNumber) {
+        newErrors.contactNumber = 'Contact Number is required';
+      } else if (!contactNumberPattern.test(formData.contactNumber)) {
+        newErrors.contactNumber = 'Contact Number must be 10 digits';
+      }
+      if (!formData.aadharNumber) {
+        newErrors.aadharNumber = 'Aadhar Number is required';
+      } else if (!aadharPattern.test(formData.aadharNumber)) {
+        newErrors.aadharNumber = 'Aadhar Number must be 12 digits';
+      }
+      if (!formData.panCardNumber) {
+        newErrors.panCardNumber = 'PAN Card Number is required';
+      } else if (!panPattern.test(formData.panCardNumber)) {
+        newErrors.panCardNumber = 'PAN Card Number is invalid';
+      }
+      if (!formData.email) {
+        newErrors.email = 'Email is required';
+      } else if (!emailPattern.test(formData.email)) {
+        newErrors.email = 'Email is invalid';
+      }
+      if (!formData.monthlyIncome) newErrors.monthlyIncome = 'Monthly Income is required';
+    }
+
+    if (!formData.idProofFile) newErrors.idProofFile = 'ID Proof is required';
+    if (!formData.aadharFile) newErrors.aadharFile = 'Aadhar file is required';
+    if (!formData.panCardFile) newErrors.panCardFile = 'PAN Card file is required';
+
+    return newErrors;
+  };
+
+  return (
+    <Container maxW="md" p={4}>
+      <Heading as="h2" mb={6}>CC Application Form</Heading>
+
+      <FormControl isInvalid={!!errors.customerType} mb={4}>
+        <FormLabel>Is Customer New or Existing?</FormLabel>
+        <Select
+          name="customerType"
+          value={customerType}
+          onChange={(e) => setCustomerType(e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="new">New</option>
+          <option value="existing">Existing</option>
+        </Select>
+        <FormErrorMessage>{errors.customerType}</FormErrorMessage>
+      </FormControl>
+
+      {customerType === 'existing' && (
+        <FormControl isInvalid={!!errors.bankAccountId} mb={4}>
+          <FormLabel>Bank Account ID</FormLabel>
+          <Input
+            name="bankAccountId"
+            value={formData.bankAccountId}
+            onChange={(e) => {
+              handleInputChange(e);
+              if (e.target.value) {
+                setFormData({
+                  ...formData,
+                  fullName: 'John Doe',
+                  dob: '1990-01-01',
+                  address: '123 Main St, City, Country',
+                  contactNumber: '9876543210',
+                  aadharNumber: '123412341234',
+                  panCardNumber: 'ABCDE1234F',
+                  email: 'johndoe@example.com',
+                  monthlyIncome: '50000',
+                });
+              }
+            }}
+          />
+          <FormErrorMessage>{errors.bankAccountId}</FormErrorMessage>
+        </FormControl>
+      )}
+
+      {customerType === 'new' && (
+        <>
+          <FormControl isInvalid={!!errors.fullName} mb={4}>
+            <FormLabel>Full Name</FormLabel>
+            <Input
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
+          </FormControl>
+
+        <FormControl isInvalid={!!errors.dob} mb={4}>
+  <FormLabel>Date of Birth</FormLabel>
+  <Input
+    type="date"
+    name="dob"
+    value={formData.dob}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.dob}</FormErrorMessage>
+</FormControl>
+        <FormControl isInvalid={!!errors.address} mb={4}>
+  <FormLabel>Address</FormLabel>
+  <Input
+    name="address"
+    value={formData.address}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.address}</FormErrorMessage>
+</FormControl>
+
+<FormControl isInvalid={!!errors.contactNumber} mb={4}>
+  <FormLabel>Contact Number</FormLabel>
+  <Input
+    name="contactNumber"
+    value={formData.contactNumber}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
+</FormControl>
+
+<FormControl isInvalid={!!errors.aadharNumber} mb={4}>
+  <FormLabel>Aadhar Number</FormLabel>
+  <Input
+    name="aadharNumber"
+    value={formData.aadharNumber}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
+</FormControl>
+
+<FormControl isInvalid={!!errors.panCardNumber} mb={4}>
+  <FormLabel>PAN Card Number</FormLabel>
+  <Input
+    name="panCardNumber"
+    value={formData.panCardNumber}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
+</FormControl>
+
+<FormControl isInvalid={!!errors.email} mb={4}>
+  <FormLabel>Email</FormLabel>
+  <Input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.email}</FormErrorMessage>
+</FormControl>
+
+<FormControl isInvalid={!!errors.monthlyIncome} mb={4}>
+  <FormLabel>Monthly Income</FormLabel>
+  <Input
+    type="number"
+    name="monthlyIncome"
+    value={formData.monthlyIncome}
+    onChange={handleInputChange}
+  />
+  <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
+</FormControl>
+
+{/* Product Selection */}
+<FormControl mb={4}>
+  <FormLabel>Product</FormLabel>
+  <Select name="product" value={formData.product} onChange={handleProductChange}>
+    <option value="Silver">Silver</option>
+    <option value="Gold">Gold</option>
+    <option value="Platinum">Platinum</option>
+  </Select>
+</FormControl>
+
+{/* Selected Product Details */}
+{selectedProductDetails && (
+  <Box mt={6}>
+    <Heading as="h4" size="md" mb={4}>Selected Product Details</Heading>
+    <Text>Brand: {selectedProductDetails.brand}</Text>
+    <Text>Usage: {selectedProductDetails.usage}</Text>
+    <Text>Affiliation: {selectedProductDetails.affiliation}</Text>
+    <Text>Card Type: {selectedProductDetails.cardType}</Text>
+    <Text>Card Limit: {selectedProductDetails.cardLimit}</Text>
+    <Text>Valid Upto: {selectedProductDetails.validUpto}</Text>
+    <Text>Transfer Amount: {selectedProductDetails.transferAmount}</Text>
+    <Text>Balance Transfer: {selectedProductDetails.balanceTransfer}</Text>
+    <Text>Effective Rate: {selectedProductDetails.effectiveRate}</Text>
+  </Box>
+)}
+
+<Box mb={4}>
+  <Input
+    accept=".pdf,.jpg,.jpeg,.png"
+    style={{ display: 'none' }}
+    id="aadharFile"
+    type="file"
+    name="aadharFile"
+    onChange={handleFileChange}
+  />
+  <label htmlFor="aadharFile">
+    <Button as="span" colorScheme="teal" width="full">
+      Upload Aadhar Card
+    </Button>
+  </label>
+  {errors.aadharFile && <Text color="red.500">{errors.aadharFile}</Text>}
+</Box>
+
+<Box mb={4}>
+  <Input
+    accept=".pdf,.jpg,.jpeg,.png"
+    style={{ display: 'none' }}
+    id="panCardFile"
+    type="file"
+    name="panCardFile"
+    onChange={handleFileChange}
+  />
+  <label htmlFor="panCardFile">
+    <Button as="span" colorScheme="teal" width="full">
+      Upload PAN Card
+    </Button>
+  </label>
+  {errors.panCardFile && <Text color="red.500">{errors.panCardFile}</Text>}
+</Box>
+
+<Box mt={4} display="flex" justifyContent="space-between">
+  <Button colorScheme="blue" onClick={handleSubmit}>
+    Submit
+  </Button>
+  <Button variant="outline" colorScheme="blue" onClick={handleSave}>
+    Save as Text
+  </Button> 
+  <Button mt={6} ml={4} colorScheme="red" onClick={handleCancel}>
+    Cancel
+  </Button>
+</Box>
