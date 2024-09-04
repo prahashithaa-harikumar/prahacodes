@@ -5,10 +5,10 @@
       <Input
         name="bankAccountId"
         value={formData.bankAccountId}
-        onChange={(e) => {
-          handleInputChange(e);
-          // Auto-populate the form with default data for existing customers
-          if (e.target.value) {
+        onChange={handleInputChange}
+        onBlur={(e) => {
+          if (e.target.value === '123') {
+            // Simulate fetching data and auto-populate the form
             setFormData({
               ...formData,
               fullName: 'John Doe',
@@ -32,6 +32,7 @@
         name="fullName"
         value={formData.fullName}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.fullName}</FormErrorMessage>
     </FormControl>
@@ -43,6 +44,7 @@
         name="dob"
         value={formData.dob}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.dob}</FormErrorMessage>
     </FormControl>
@@ -53,6 +55,7 @@
         name="address"
         value={formData.address}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.address}</FormErrorMessage>
     </FormControl>
@@ -63,6 +66,7 @@
         name="contactNumber"
         value={formData.contactNumber}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
     </FormControl>
@@ -73,6 +77,7 @@
         name="aadharNumber"
         value={formData.aadharNumber}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
     </FormControl>
@@ -83,6 +88,7 @@
         name="panCardNumber"
         value={formData.panCardNumber}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
     </FormControl>
@@ -90,10 +96,10 @@
     <FormControl isInvalid={!!errors.email} mb={4}>
       <FormLabel>Email</FormLabel>
       <Input
-        type="email"
         name="email"
         value={formData.email}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.email}</FormErrorMessage>
     </FormControl>
@@ -101,10 +107,10 @@
     <FormControl isInvalid={!!errors.monthlyIncome} mb={4}>
       <FormLabel>Monthly Income</FormLabel>
       <Input
-        type="number"
         name="monthlyIncome"
         value={formData.monthlyIncome}
         onChange={handleInputChange}
+        isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
       />
       <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
     </FormControl>
