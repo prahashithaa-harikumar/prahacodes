@@ -1,0 +1,100 @@
+import React, { useState } from 'react';
+import {
+  Container,
+  Heading,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Select,
+  Box,
+  FormErrorMessage,
+} from '@chakra-ui/react';
+
+const CustomerApplicationForm = () => {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: 'Silver',
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.fullName) newErrors.fullName = 'Full Name is required';
+    if (!formData.dob) newErrors.dob = 'Date of Birth is required';
+    // Add more validations as needed
+    return newErrors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: '' });
+  };
+
+  const handleSubmit = () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      alert('Please fix the errors in the form.');
+      return;
+    }
+    alert('Customer data submitted successfully!');
+  };
+
+  return (
+    <Container>
+      <Heading as="h1" mb={6}>Customer Application Form</Heading>
+
+      <FormControl mb={4} isInvalid={!!errors.fullName}>
+        <FormLabel>Full Name</FormLabel>
+        <Input
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleInputChange}
+        />
+        {errors.fullName && <FormErrorMessage>{errors.fullName}</FormErrorMessage>}
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={!!errors.dob}>
+        <FormLabel>Date of Birth</FormLabel>
+        <Input
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleInputChange}
+        />
+        {errors.dob && <FormErrorMessage>{errors.dob}</FormErrorMessage>}
+      </FormControl>
+
+      <FormControl mb={4}>
+        <FormLabel>Product</FormLabel>
+        <Select
+          name="product"
+          value={formData.product}
+          onChange={handleInputChange}
+        >
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
+        </Select>
+      </FormControl>
+
+      <Box mt={4}>
+        <Button colorScheme="blue" onClick={handleSubmit}>
+          Submit
+        </Button>
+      </Box>
+    </Container>
+  );
+};
+
+export default CustomerApplicationForm;
