@@ -1,0 +1,186 @@
+import React, { useState } from 'react';
+import { TextField, Button, FormControl, MenuItem, Select, InputLabel } from '@material-ui/core';
+
+function CustomerForm() {
+    const [formData, setFormData] = useState({
+        customerType: 'New',
+        fullName: '',
+        dob: '',
+        address: '',
+        contactNumber: '',
+        aadharNumber: '',
+        panCardNumber: '',
+        email: '',
+        monthlyIncome: ''
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const validateForm = () => {
+        let errors = {};
+
+        if (!formData.fullName) {
+            errors.fullName = "Full Name is required";
+        }
+        if (!formData.dob) {
+            errors.dob = "Date of Birth is required";
+        }
+        if (!formData.address) {
+            errors.address = "Address is required";
+        }
+        if (!formData.email) {
+            errors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            errors.email = "Email address is invalid";
+        }
+        if (!formData.aadharNumber) {
+            errors.aadharNumber = "Aadhar Number is required";
+        } else if (!/^\d{12}$/.test(formData.aadharNumber)) {
+            errors.aadharNumber = "Aadhar Number is invalid";
+        }
+        if (!formData.panCardNumber) {
+            errors.panCardNumber = "PAN Card Number is required";
+        } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panCardNumber)) {
+            errors.panCardNumber = "PAN Card Number is invalid";
+        }
+        if (!formData.contactNumber) {
+            errors.contactNumber = "Contact Number is required";
+        } else if (!/^\d{10}$/.test(formData.contactNumber)) {
+            errors.contactNumber = "Contact Number is invalid";
+        }
+        if (!formData.monthlyIncome) {
+            errors.monthlyIncome = "Monthly Income is required";
+        }
+
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (validateForm()) {
+            // Submit form
+            console.log('Form Submitted:', formData);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} style={{ padding: 20 }}>
+            <FormControl fullWidth style={{ marginBottom: 20 }}>
+                <InputLabel>Is Customer New or Existing?</InputLabel>
+                <Select
+                    name="customerType"
+                    value={formData.customerType}
+                    onChange={handleChange}
+                >
+                    <MenuItem value="New">New</MenuItem>
+                    <MenuItem value="Existing">Existing</MenuItem>
+                </Select>
+            </FormControl>
+
+            <TextField
+                label="Full Name"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Date of Birth"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                error={!!errors.dob}
+                helperText={errors.dob}
+                fullWidth
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                error={!!errors.address}
+                helperText={errors.address}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Contact Number"
+                name="contactNumber"
+                value={formData.contactNumber}
+                onChange={handleChange}
+                error={!!errors.contactNumber}
+                helperText={errors.contactNumber}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Aadhar Number"
+                name="aadharNumber"
+                value={formData.aadharNumber}
+                onChange={handleChange}
+                error={!!errors.aadharNumber}
+                helperText={errors.aadharNumber}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="PAN Card Number"
+                name="panCardNumber"
+                value={formData.panCardNumber}
+                onChange={handleChange}
+                error={!!errors.panCardNumber}
+                helperText={errors.panCardNumber}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <TextField
+                label="Monthly Income"
+                name="monthlyIncome"
+                value={formData.monthlyIncome}
+                onChange={handleChange}
+                error={!!errors.monthlyIncome}
+                helperText={errors.monthlyIncome}
+                fullWidth
+                style={{ marginBottom: 20 }}
+            />
+
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+                Submit
+            </Button>
+        </form>
+    );
+}
+
+export default CustomerForm;
