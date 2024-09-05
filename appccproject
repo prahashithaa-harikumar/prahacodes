@@ -25,7 +25,6 @@ const App = () => {
 
   const [errors, setErrors] = useState({});
 
-  // Function to handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -34,7 +33,6 @@ const App = () => {
     });
   };
 
-  // Function to handle customer type change and reset form if "new" is selected
   const handleCustomerTypeChange = (e) => {
     const { value } = e.target;
     if (value === 'new') {
@@ -57,9 +55,8 @@ const App = () => {
     });
   };
 
-  // Auto-populate form fields for existing customers based on Bank ID
   const handleAutoPopulate = (e) => {
-    if (e.target.value === '123') {
+    if (e.target.value === '123' && formData.customerType === 'existing') {
       setFormData({
         ...formData,
         fullName: 'John Doe',
@@ -74,7 +71,6 @@ const App = () => {
     }
   };
 
-  // Validation function with pattern checks
   const validateForm = () => {
     let validationErrors = {};
     if (!formData.customerType) validationErrors.customerType = 'Customer Type is required';
@@ -113,17 +109,14 @@ const App = () => {
     return Object.keys(validationErrors).length === 0;
   };
 
-  // Handle next button click
   const handleNext = () => {
     if (validateForm()) setStep(step + 1);
   };
 
-  // Handle previous button click
   const handlePrevious = () => {
     setStep(step - 1);
   };
 
-  // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
       const dataText = `
@@ -149,7 +142,6 @@ const App = () => {
     }
   };
 
-  // Handle cancel button click
   const handleCancel = () => {
     setFormData({
       customerType: '',
