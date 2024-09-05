@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ChakraProvider, Box, Button, Heading, Text } from '@chakra-ui/react';
-import CustomerData from './CustomerData';
-import ProductSelection from './ProductSelection';
-import FileUpload from './FileUpload';
+import CustomerData from './components/CustomerData';
+import ProductSelection from './components/ProductSelection';
+import FileUpload from './components/FileUpload';
 
 const App = () => {
   const [step, setStep] = useState(1);
@@ -12,10 +12,6 @@ const App = () => {
     dob: '',
     address: '',
     contactNumber: '',
-    aadharNumber: '',
-    panCardNumber: '',
-    email: '',
-    monthlyIncome: '',
     product: 'Silver',
     idProofFile: null,
     aadharFile: null,
@@ -33,37 +29,23 @@ const App = () => {
   const handlePrevious = () => setStep(step - 1);
 
   const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setFormData({
-        ...formData,
-        [name]: files[0],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const validateForm = () => {
     let validationErrors = {};
-    if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
-    if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
-    if (!formData.address) validationErrors.address = 'Address is required';
-    if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
-    if (!formData.email) validationErrors.email = 'Email is required';
-    if (!formData.aadharNumber) validationErrors.aadharNumber = 'Aadhar Number is required';
-    if (!formData.panCardNumber) validationErrors.panCardNumber = 'PAN Card Number is required';
-    if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
-    if (!formData.product) validationErrors.product = 'Product selection is required';
-    if (step === 3) {
-      if (!formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
-      if (!formData.aadharFile) validationErrors.aadharFile = 'Aadhar Card is required';
-      if (!formData.panCardFile) validationErrors.panCardFile = 'PAN Card is required';
+    if (step === 1) {
+      if (!formData.bankId && !formData.fullName) validationErrors.bankId = 'Bank ID is required';
+      if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
+      if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
+      if (!formData.address) validationErrors.address = 'Address is required';
+      if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
     }
-
+    if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
@@ -75,10 +57,6 @@ const App = () => {
         Date of Birth: ${formData.dob}
         Address: ${formData.address}
         Contact Number: ${formData.contactNumber}
-        Email: ${formData.email}
-        Aadhar Number: ${formData.aadharNumber}
-        PAN Card Number: ${formData.panCardNumber}
-        Monthly Income: ${formData.monthlyIncome}
         Product: ${formData.product}
       `;
   
@@ -96,7 +74,14 @@ const App = () => {
       <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
         <Heading as="h1" mb={6} textAlign="center">CC Application Form</Heading>
         
-        {step === 1 && <CustomerData formData={formData} handleInputChange={handleInputChange} errors={errors} />}
+        {step === 1 && (
+          <CustomerData
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+            setFormData={setFormData}  // Pass the setFormData function
+          />
+        )}
         {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />}
         {step === 3 && <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />}
 
