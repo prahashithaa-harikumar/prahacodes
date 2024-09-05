@@ -1,47 +1,46 @@
 import React from 'react';
-import { FormControl, FormLabel, Select, Box, Text } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Select, FormHelperText, Text } from '@chakra-ui/react';
 
-const productDetails = {
+const productInfo = {
   Silver: {
-    usage: 'General Usage',
-    affiliation: 'None',
-    cardType: 'Credit Card',
-    cardLimit: '50,000 INR',
-    validUpto: '12/2025',
-    transferAmount: '10,000 INR',
-    balanceTransfer: 'Yes',
-    effectiveRate: '1.5%'
+    usage: 'Basic usage with standard benefits.',
+    affiliation: 'Local stores and online.',
+    cardType: 'Silver Card',
+    cardLimit: 'Up to $5,000',
+    validUpto: '3 years',
+    transferAmount: 'N/A',
+    balanceTransfer: 'N/A',
+    effectiveRate: '15% APR',
   },
   Gold: {
-    usage: 'Premium Usage',
-    affiliation: 'Some Affiliation',
-    cardType: 'Credit Card',
-    cardLimit: '1,00,000 INR',
-    validUpto: '12/2026',
-    transferAmount: '20,000 INR',
+    usage: 'Enhanced benefits and rewards.',
+    affiliation: 'National and international.',
+    cardType: 'Gold Card',
+    cardLimit: 'Up to $10,000',
+    validUpto: '5 years',
+    transferAmount: 'Up to $2,000',
     balanceTransfer: 'Yes',
-    effectiveRate: '2.0%'
+    effectiveRate: '12% APR',
   },
   Platinum: {
-    usage: 'Exclusive Usage',
-    affiliation: 'Exclusive Affiliation',
-    cardType: 'Credit Card',
-    cardLimit: '2,00,000 INR',
-    validUpto: '12/2027',
-    transferAmount: '30,000 INR',
+    usage: 'Premium benefits with higher rewards.',
+    affiliation: 'Global acceptance.',
+    cardType: 'Platinum Card',
+    cardLimit: 'Up to $20,000',
+    validUpto: '7 years',
+    transferAmount: 'Up to $5,000',
     balanceTransfer: 'Yes',
-    effectiveRate: '2.5%'
+    effectiveRate: '10% APR',
   },
 };
 
-const ProductSelection = ({ formData, handleInputChange }) => {
-  const selectedProduct = productDetails[formData.product];
-
+const ProductSelection = ({ formData, handleInputChange, errors }) => {
   return (
     <Box>
-      <FormControl mb={4}>
-        <FormLabel>Select Product</FormLabel>
+      <FormControl isInvalid={errors.product}>
+        <FormLabel htmlFor="product">Select Product</FormLabel>
         <Select
+          id="product"
           name="product"
           value={formData.product}
           onChange={handleInputChange}
@@ -50,19 +49,20 @@ const ProductSelection = ({ formData, handleInputChange }) => {
           <option value="Gold">Gold</option>
           <option value="Platinum">Platinum</option>
         </Select>
+        <FormHelperText>Select your desired credit card product.</FormHelperText>
       </FormControl>
 
-      {selectedProduct && (
+      {productInfo[formData.product] && (
         <Box mt={4}>
           <Text fontWeight="bold">Product Details:</Text>
-          <Text><strong>Usage:</strong> {selectedProduct.usage}</Text>
-          <Text><strong>Affiliation:</strong> {selectedProduct.affiliation}</Text>
-          <Text><strong>Card Type:</strong> {selectedProduct.cardType}</Text>
-          <Text><strong>Card Limit:</strong> {selectedProduct.cardLimit}</Text>
-          <Text><strong>Valid Upto:</strong> {selectedProduct.validUpto}</Text>
-          <Text><strong>Transfer Amount:</strong> {selectedProduct.transferAmount}</Text>
-          <Text><strong>Balance Transfer:</strong> {selectedProduct.balanceTransfer}</Text>
-          <Text><strong>Effective Rate:</strong> {selectedProduct.effectiveRate}</Text>
+          <Text><strong>Usage:</strong> {productInfo[formData.product].usage}</Text>
+          <Text><strong>Affiliation:</strong> {productInfo[formData.product].affiliation}</Text>
+          <Text><strong>Card Type:</strong> {productInfo[formData.product].cardType}</Text>
+          <Text><strong>Card Limit:</strong> {productInfo[formData.product].cardLimit}</Text>
+          <Text><strong>Valid Upto:</strong> {productInfo[formData.product].validUpto}</Text>
+          <Text><strong>Transfer Amount:</strong> {productInfo[formData.product].transferAmount}</Text>
+          <Text><strong>Balance Transfer:</strong> {productInfo[formData.product].balanceTransfer}</Text>
+          <Text><strong>Effective Rate:</strong> {productInfo[formData.product].effectiveRate}</Text>
         </Box>
       )}
     </Box>
