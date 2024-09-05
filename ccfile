@@ -1,61 +1,41 @@
 import React from 'react';
-import { FormControl, FormLabel, Input, FormErrorMessage, Box, Text } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, FormErrorMessage, Text } from '@chakra-ui/react';
 
 const FileUpload = ({ formData, handleInputChange, errors }) => {
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (files.length > 0) {
-      // Assuming a single file is uploaded for each input
-      handleInputChange({
-        target: {
-          name,
-          value: files[0]
-        }
-      });
-    }
-  };
-
   return (
     <Box>
-      <FormControl isInvalid={!!errors.idProofFile} mb={4}>
-        <FormLabel>ID Proof</FormLabel>
+      <FormControl isInvalid={errors.idProofFile}>
+        <FormLabel htmlFor="idProofFile">Upload ID Proof</FormLabel>
         <Input
-          type="file"
+          id="idProofFile"
           name="idProofFile"
-          onChange={handleFileChange}
-          accept=".jpg, .jpeg, .png, .pdf"
+          type="file"
+          onChange={handleInputChange}
         />
         <FormErrorMessage>{errors.idProofFile}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.aadharFile} mb={4}>
-        <FormLabel>Aadhar Card</FormLabel>
+      <FormControl isInvalid={errors.aadharFile} mt={4}>
+        <FormLabel htmlFor="aadharFile">Upload Aadhar Card</FormLabel>
         <Input
-          type="file"
+          id="aadharFile"
           name="aadharFile"
-          onChange={handleFileChange}
-          accept=".jpg, .jpeg, .png, .pdf"
+          type="file"
+          onChange={handleInputChange}
         />
         <FormErrorMessage>{errors.aadharFile}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.panCardFile} mb={4}>
-        <FormLabel>PAN Card</FormLabel>
+      <FormControl isInvalid={errors.panCardFile} mt={4}>
+        <FormLabel htmlFor="panCardFile">Upload PAN Card</FormLabel>
         <Input
-          type="file"
+          id="panCardFile"
           name="panCardFile"
-          onChange={handleFileChange}
-          accept=".jpg, .jpeg, .png, .pdf"
+          type="file"
+          onChange={handleInputChange}
         />
         <FormErrorMessage>{errors.panCardFile}</FormErrorMessage>
       </FormControl>
-
-      {/* Display file names if needed */}
-      <Box mt={4}>
-        <Text><strong>Uploaded ID Proof:</strong> {formData.idProofFile ? formData.idProofFile.name : 'None'}</Text>
-        <Text><strong>Uploaded Aadhar Card:</strong> {formData.aadharFile ? formData.aadharFile.name : 'None'}</Text>
-        <Text><strong>Uploaded PAN Card:</strong> {formData.panCardFile ? formData.panCardFile.name : 'None'}</Text>
-      </Box>
     </Box>
   );
 };
