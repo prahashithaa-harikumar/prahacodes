@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { ChakraProvider, Box, Button, Heading, Text } from '@chakra-ui/react';
-import CustomerData from './CustomerData';
-import ProductSelection from './ProductSelection';
-import FileUpload from './FileUpload';
+import { ChakraProvider, Box, Button, Text } from '@chakra-ui/react';
+import CustomerData from './components/CustomerData';
+import ProductSelection from './components/ProductSelection';
+import FileUpload from './components/FileUpload';
 
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    bankId: '',
+    bankAccountId: '',
     fullName: '',
     dob: '',
     address: '',
     contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    customerType: 'new', // or 'existing'
     product: 'Silver',
     idProofFile: null,
     aadharFile: null,
@@ -19,14 +24,6 @@ const App = () => {
   });
 
   const [errors, setErrors] = useState({});
-
-  const handleNext = () => {
-    if (validateForm()) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrevious = () => setStep(step - 1);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,50 +34,64 @@ const App = () => {
   };
 
   const validateForm = () => {
-    let validationErrors = {};
-    if (!formData.bankId) validationErrors.bankId = 'Bank ID is required';
-    if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
-    if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
-    if (!formData.address) validationErrors.address = 'Address is required';
-    if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
-    if (!formData.product) validationErrors.product = 'Product selection is required';
-    if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
+    let newErrors = {};
+    // Validate for mandatory fields
+    if (!formData.fullName) newErrors.fullName = 'Full Name is required';
+    if (!formData.dob) newErrors.dob = 'Date of Birth is required';
+    if (!formData.address) newErrors.address = 'Address is required';
+    if (!formData.contactNumber) newErrors.contactNumber = 'Contact Number is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.aadharNumber) newErrors.aadharNumber = 'Aadhar Number is required';
+    if (!formData.panCardNumber) newErrors.panCardNumber = 'PAN Card Number is required';
+    if (!formData.monthlyIncome) newErrors.monthlyIncome = 'Monthly Income is required';
+    if (formData.customerType === 'existing' && !formData.bankAccountId) newErrors.bankAccountId = 'Bank Account ID is required';
 
-    setErrors(validationErrors);
-    return Object.keys(validationErrors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateForm()) setStep(step + 1);
+  };
+
+  const handlePrevious = () => {
+    setStep(step - 1);
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
-      const dataText = `
-        Full Name: ${formData.fullName}
-        Date of Birth: ${formData.dob}
-        Address: ${formData.address}
-        Contact Number: ${formData.contactNumber}
-        Product: ${formData.product}
-      `;
-  
-      const blob = new Blob([dataText], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'customer_application_data.txt';
-      link.click();
-      alert('Form submitted and data saved as a text file!');
+      // Submission logic here (e.g. send data or generate file)
+      alert('Form submitted successfully!');
     }
   };
 
   return (
     <ChakraProvider>
-      <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
-        <Heading as="h1" mb={6} textAlign="center">CC Application Form</Heading>
-        
-        {step === 1 && <CustomerData formData={formData} handleInputChange={handleInputChange} errors={errors} />}
-        {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />}
-        {step === 3 && <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />}
+      <Box className="container">
+        {step === 1 && (
+          <CustomerData 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            errors={errors} 
+          />
+        )}
+        {step === 2 && (
+          <ProductSelection 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+          />
+        )}
+        {step === 3 && (
+          <FileUpload 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            errors={errors} 
+          />
+        )}
 
-        <Box mt={6} display="flex" justifyContent="space-between">
+        <Box mt={4}>
           {step > 1 && (
-            <Button onClick={handlePrevious} colorScheme="gray">
+            <Button onClick={handlePrevious} mr={4}>
               Previous
             </Button>
           )}
