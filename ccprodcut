@@ -1,37 +1,69 @@
-import React, { useState } from 'react';
-import { Box, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
+import React from 'react';
+import { FormControl, FormLabel, Select, Box, Text } from '@chakra-ui/react';
 
-const ProductSelection = ({ formData, handleInputChange, errors }) => {
-  const [productDetails, setProductDetails] = useState('');
+const productDetails = {
+  Silver: {
+    usage: 'General Usage',
+    affiliation: 'None',
+    cardType: 'Credit Card',
+    cardLimit: '50,000 INR',
+    validUpto: '12/2025',
+    transferAmount: '10,000 INR',
+    balanceTransfer: 'Yes',
+    effectiveRate: '1.5%'
+  },
+  Gold: {
+    usage: 'Premium Usage',
+    affiliation: 'Some Affiliation',
+    cardType: 'Credit Card',
+    cardLimit: '1,00,000 INR',
+    validUpto: '12/2026',
+    transferAmount: '20,000 INR',
+    balanceTransfer: 'Yes',
+    effectiveRate: '2.0%'
+  },
+  Platinum: {
+    usage: 'Exclusive Usage',
+    affiliation: 'Exclusive Affiliation',
+    cardType: 'Credit Card',
+    cardLimit: '2,00,000 INR',
+    validUpto: '12/2027',
+    transferAmount: '30,000 INR',
+    balanceTransfer: 'Yes',
+    effectiveRate: '2.5%'
+  },
+};
 
-  const productInfo = {
-    Silver: { interest: '3%', balance: '$1000' },
-    Gold: { interest: '4%', balance: '$5000' },
-    Platinum: { interest: '5%', balance: '$10000' }
-  };
-
-  const handleProductChange = (e) => {
-    handleInputChange(e);
-    const selectedProduct = e.target.value;
-    setProductDetails(
-      `Interest: ${productInfo[selectedProduct].interest}, Balance: ${productInfo[selectedProduct].balance}`
-    );
-  };
+const ProductSelection = ({ formData, handleInputChange }) => {
+  const selectedProduct = productDetails[formData.product];
 
   return (
     <Box>
-      <FormControl mb={4} isInvalid={errors.product}>
-        <FormLabel>Product</FormLabel>
-        <Select name="product" value={formData.product} onChange={handleProductChange}>
+      <FormControl mb={4}>
+        <FormLabel>Select Product</FormLabel>
+        <Select
+          name="product"
+          value={formData.product}
+          onChange={handleInputChange}
+        >
           <option value="Silver">Silver</option>
           <option value="Gold">Gold</option>
           <option value="Platinum">Platinum</option>
         </Select>
-        <FormErrorMessage>{errors.product}</FormErrorMessage>
       </FormControl>
 
-      {productDetails && (
-        <Text mt={4} fontWeight="bold">{productDetails}</Text>
+      {selectedProduct && (
+        <Box mt={4}>
+          <Text fontWeight="bold">Product Details:</Text>
+          <Text><strong>Usage:</strong> {selectedProduct.usage}</Text>
+          <Text><strong>Affiliation:</strong> {selectedProduct.affiliation}</Text>
+          <Text><strong>Card Type:</strong> {selectedProduct.cardType}</Text>
+          <Text><strong>Card Limit:</strong> {selectedProduct.cardLimit}</Text>
+          <Text><strong>Valid Upto:</strong> {selectedProduct.validUpto}</Text>
+          <Text><strong>Transfer Amount:</strong> {selectedProduct.transferAmount}</Text>
+          <Text><strong>Balance Transfer:</strong> {selectedProduct.balanceTransfer}</Text>
+          <Text><strong>Effective Rate:</strong> {selectedProduct.effectiveRate}</Text>
+        </Box>
       )}
     </Box>
   );
