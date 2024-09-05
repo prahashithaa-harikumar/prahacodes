@@ -1,0 +1,40 @@
+import React, { useState } from 'react';
+import { Box, FormControl, FormLabel, Select, Text } from '@chakra-ui/react';
+
+const ProductSelection = ({ formData, handleInputChange, errors }) => {
+  const [productDetails, setProductDetails] = useState('');
+
+  const productInfo = {
+    Silver: { interest: '3%', balance: '$1000' },
+    Gold: { interest: '4%', balance: '$5000' },
+    Platinum: { interest: '5%', balance: '$10000' }
+  };
+
+  const handleProductChange = (e) => {
+    handleInputChange(e);
+    const selectedProduct = e.target.value;
+    setProductDetails(
+      `Interest: ${productInfo[selectedProduct].interest}, Balance: ${productInfo[selectedProduct].balance}`
+    );
+  };
+
+  return (
+    <Box>
+      <FormControl mb={4} isInvalid={errors.product}>
+        <FormLabel>Product</FormLabel>
+        <Select name="product" value={formData.product} onChange={handleProductChange}>
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
+        </Select>
+        <FormErrorMessage>{errors.product}</FormErrorMessage>
+      </FormControl>
+
+      {productDetails && (
+        <Text mt={4} fontWeight="bold">{productDetails}</Text>
+      )}
+    </Box>
+  );
+};
+
+export default ProductSelection;
