@@ -1,0 +1,45 @@
+import React from 'react';
+import { Box, FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
+
+const FileUpload = ({ formData, handleInputChange, errors }) => {
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    handleInputChange({ target: { name, value: files[0] } });
+  };
+
+  return (
+    <Box>
+      <FormControl mb={4} isInvalid={errors.idProofFile}>
+        <FormLabel>ID Proof</FormLabel>
+        <Input
+          type="file"
+          name="idProofFile"
+          onChange={handleFileChange}
+        />
+        <FormErrorMessage>{errors.idProofFile}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.aadharFile}>
+        <FormLabel>Aadhar Card</FormLabel>
+        <Input
+          type="file"
+          name="aadharFile"
+          onChange={handleFileChange}
+        />
+        <FormErrorMessage>{errors.aadharFile}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.panCardFile}>
+        <FormLabel>PAN Card</FormLabel>
+        <Input
+          type="file"
+          name="panCardFile"
+          onChange={handleFileChange}
+        />
+        <FormErrorMessage>{errors.panCardFile}</FormErrorMessage>
+      </FormControl>
+    </Box>
+  );
+};
+
+export default FileUpload;
