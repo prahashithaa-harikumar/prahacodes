@@ -1,275 +1,152 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Box, FormControl, FormLabel, Input, FormErrorMessage, Select } from '@chakra-ui/react';
 
-const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErrors }) => {
-  const [customerType, setCustomerType] = useState('new');
-  const [localFormData, setLocalFormData] = useState(formData);
-
+const CustomerData = ({ formData, handleInputChange, errors }) => {
   useEffect(() => {
-    setLocalFormData(formData);
-  }, [formData]);
-
-  const handleCustomerTypeChange = (e) => {
-    const type = e.target.value;
-    setCustomerType(type);
-    if (type === 'new') {
-      setLocalFormData({
-        ...formData,
+    if (formData.customerType === 'new') {
+      // Clear fields when switching to 'new'
+      const clearedData = {
         bankId: '',
         fullName: '',
         dob: '',
         address: '',
-        email: '',
         contactNumber: '',
+        email: '',
         aadharNumber: '',
         panCardNumber: '',
-        monthlyIncome: ''
-      });
-    } else if (type === 'existing') {
-      setLocalFormData({
-        ...formData,
-        bankId: '',
+        monthlyIncome: '',
+      };
+      Object.keys(clearedData).forEach(key => {
+        handleInputChange({ target: { name: key, value: clearedData[key] } });
       });
     }
-  };
-
-  const handleBankIdBlur = (e) => {
-    const bankId = e.target.value;
-    if (customerType === 'existing' && bankId === '123') {
-      setLocalFormData({
-        ...localFormData,
-        fullName: 'John Doe',
-        dob: '1990-01-01',
-        address: '123 Main St, City, Country',
-        email: 'johndoe@example.com',
-        contactNumber: '9876543210',
-        aadharNumber: '123412341234',
-        panCardNumber: 'ABCDE1234F',
-        monthlyIncome: '50000'
-      });
-    }
-  };
-
-  const handleInputChangeLocal = (e) => {
-    const { name, value } = e.target;
-    setLocalFormData({
-      ...localFormData,
-      [name]: value,
-    });
-    if (name in errors) {
-      setErrors({ ...errors, [name]: '' });
-    }
-  };
+  }, [formData.customerType, handleInputChange]);
 
   return (
     <Box>
-      <FormControl mb={4} isInvalid={errors.customerType}>
+      <FormControl isInvalid={errors.customerType} mb={4}>
         <FormLabel>Customer Type</FormLabel>
         <Select
           name="customerType"
-          value={customerType}
-          onChange={handleCustomerTypeChange}
+          value={formData.customerType}
+          onChange={handleInputChange}
         >
           <option value="new">New</option>
           <option value="existing">Existing</option>
         </Select>
-        {errors.customerType && <FormErrorMessage>{errors.customerType}</FormErrorMessage>}
+        <FormErrorMessage>{errors.customerType}</FormErrorMessage>
       </FormControl>
 
-      {customerType === 'existing' && (
+      {formData.customerType === 'existing' && (
         <>
-          <FormControl mb={4} isInvalid={errors.bankId}>
+          <FormControl isInvalid={errors.bankId} mb={4}>
             <FormLabel>Bank Account ID</FormLabel>
             <Input
               name="bankId"
-              value={localFormData.bankId}
-              onChange={handleInputChangeLocal}
-              onBlur={handleBankIdBlur}
-              required
+              value={formData.bankId}
+              onChange={handleInputChange}
+              onBlur={(e) => {
+                if (e.target.value === '123') {
+                  // Simulate fetching data and auto-populate the form
+                  handleInputChange({ target: { name: 'fullName', value: 'John Doe' } });
+                  handleInputChange({ target: { name: 'dob', value: '1990-01-01' } });
+                  handleInputChange({ target: { name: 'address', value: '123 Main St, City, Country' } });
+                  handleInputChange({ target: { name: 'contactNumber', value: '9876543210' } });
+                  handleInputChange({ target: { name: 'email', value: 'johndoe@example.com' } });
+                  handleInputChange({ target: { name: 'aadharNumber', value: '123412341234' } });
+                  handleInputChange({ target: { name: 'panCardNumber', value: 'ABCDE1234F' } });
+                  handleInputChange({ target: { name: 'monthlyIncome', value: '50000' } });
+                }
+              }}
             />
-            {errors.bankId && <FormErrorMessage>{errors.bankId}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.fullName}>
-            <FormLabel>Full Name</FormLabel>
-            <Input
-              name="fullName"
-              value={localFormData.fullName}
-              onChange={handleInputChangeLocal}
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.fullName && <FormErrorMessage>{errors.fullName}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.dob}>
-            <FormLabel>Date of Birth</FormLabel>
-            <Input
-              name="dob"
-              type="date"
-              value={localFormData.dob}
-              onChange={handleInputChangeLocal}
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.dob && <FormErrorMessage>{errors.dob}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.address}>
-            <FormLabel>Address</FormLabel>
-            <Input
-              name="address"
-              value={localFormData.address}
-              onChange={handleInputChangeLocal}
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.contactNumber}>
-            <FormLabel>Contact Number</FormLabel>
-            <Input
-              name="contactNumber"
-              value={localFormData.contactNumber}
-              onChange={handleInputChangeLocal}
-              pattern="\d{10}"
-              title="Contact Number must be 10 digits"
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.contactNumber && <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.aadharNumber}>
-            <FormLabel>Aadhar Number</FormLabel>
-            <Input
-              name="aadharNumber"
-              value={localFormData.aadharNumber}
-              onChange={handleInputChangeLocal}
-              pattern="\d{12}"
-              title="Aadhar Number must be 12 digits"
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.aadharNumber && <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.panCardNumber}>
-            <FormLabel>PAN Card Number</FormLabel>
-            <Input
-              name="panCardNumber"
-              value={localFormData.panCardNumber}
-              onChange={handleInputChangeLocal}
-              pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
-              title="PAN Card Number must be in format: AAAAA1234A"
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.panCardNumber && <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.monthlyIncome}>
-            <FormLabel>Monthly Income</FormLabel>
-            <Input
-              name="monthlyIncome"
-              type="number"
-              value={localFormData.monthlyIncome}
-              onChange={handleInputChangeLocal}
-              isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
-              required
-            />
-            {errors.monthlyIncome && <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>}
+            <FormErrorMessage>{errors.bankId}</FormErrorMessage>
           </FormControl>
         </>
       )}
 
-      {customerType === 'new' && (
+      {formData.customerType === 'new' && (
         <>
-          <FormControl mb={4} isInvalid={errors.fullName}>
+          <FormControl isInvalid={errors.fullName} mb={4}>
             <FormLabel>Full Name</FormLabel>
             <Input
               name="fullName"
-              value={localFormData.fullName}
-              onChange={handleInputChangeLocal}
+              value={formData.fullName}
+              onChange={handleInputChange}
               placeholder="Full Name"
-              pattern="^[a-zA-Z\s]+$"
-              title="Full Name must contain only letters and spaces"
-              required
             />
-            {errors.fullName && <FormErrorMessage>{errors.fullName}</FormErrorMessage>}
+            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.dob}>
+
+          <FormControl isInvalid={errors.dob} mb={4}>
             <FormLabel>Date of Birth</FormLabel>
             <Input
               name="dob"
               type="date"
-              value={localFormData.dob}
-              onChange={handleInputChangeLocal}
-              required
+              value={formData.dob}
+              onChange={handleInputChange}
             />
-            {errors.dob && <FormErrorMessage>{errors.dob}</FormErrorMessage>}
+            <FormErrorMessage>{errors.dob}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.address}>
+
+          <FormControl isInvalid={errors.address} mb={4}>
             <FormLabel>Address</FormLabel>
             <Input
               name="address"
-              value={localFormData.address}
-              onChange={handleInputChangeLocal}
-              required
+              value={formData.address}
+              onChange={handleInputChange}
             />
-            {errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
+            <FormErrorMessage>{errors.address}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.email}>
+
+          <FormControl isInvalid={errors.contactNumber} mb={4}>
+            <FormLabel>Contact Number</FormLabel>
+            <Input
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleInputChange}
+            />
+            <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={errors.email} mb={4}>
             <FormLabel>Email</FormLabel>
             <Input
               name="email"
               type="email"
-              value={localFormData.email}
-              onChange={handleInputChangeLocal}
-              required
+              value={formData.email}
+              onChange={handleInputChange}
             />
-            {errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.contactNumber}>
-            <FormLabel>Contact Number</FormLabel>
-            <Input
-              name="contactNumber"
-              value={localFormData.contactNumber}
-              onChange={handleInputChangeLocal}
-              pattern="\d{10}"
-              title="Contact Number must be 10 digits"
-              required
-            />
-            {errors.contactNumber && <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>}
-          </FormControl>
-          <FormControl mb={4} isInvalid={errors.aadharNumber}>
+
+          <FormControl isInvalid={errors.aadharNumber} mb={4}>
             <FormLabel>Aadhar Number</FormLabel>
             <Input
               name="aadharNumber"
-              value={localFormData.aadharNumber}
-              onChange={handleInputChangeLocal}
-              pattern="\d{12}"
-              title="Aadhar Number must be 12 digits"
-              required
+              value={formData.aadharNumber}
+              onChange={handleInputChange}
             />
-            {errors.aadharNumber && <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>}
+            <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.panCardNumber}>
+
+          <FormControl isInvalid={errors.panCardNumber} mb={4}>
             <FormLabel>PAN Card Number</FormLabel>
             <Input
               name="panCardNumber"
-              value={localFormData.panCardNumber}
-              onChange={handleInputChangeLocal}
-              pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
-              title="PAN Card Number must be in format: AAAAA1234A"
-              required
+              value={formData.panCardNumber}
+              onChange={handleInputChange}
             />
-            {errors.panCardNumber && <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>}
+            <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
           </FormControl>
-          <FormControl mb={4} isInvalid={errors.monthlyIncome}>
+
+          <FormControl isInvalid={errors.monthlyIncome} mb={4}>
             <FormLabel>Monthly Income</FormLabel>
             <Input
               name="monthlyIncome"
-              type="number"
-              value={localFormData.monthlyIncome}
-              onChange={handleInputChangeLocal}
-              required
+              value={formData.monthlyIncome}
+              onChange={handleInputChange}
             />
-            {errors.monthlyIncome && <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>}
+            <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
           </FormControl>
         </>
       )}
