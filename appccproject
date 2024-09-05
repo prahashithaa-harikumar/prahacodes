@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ChakraProvider, Box, Button, Heading, Text } from '@chakra-ui/react';
-import CustomerData from './components/CustomerData';
-import ProductSelection from './components/ProductSelection';
-import FileUpload from './components/FileUpload';
+import CustomerData from './CustomerData';
+import ProductSelection from './ProductSelection';
+import FileUpload from './FileUpload';
 
 const App = () => {
   const [step, setStep] = useState(1);
@@ -20,9 +20,18 @@ const App = () => {
     idProofFile: null,
     aadharFile: null,
     panCardFile: null,
+    customerType: 'new',
   });
 
   const [errors, setErrors] = useState({});
+
+  const handleNext = () => {
+    if (validateForm()) {
+      setStep(step + 1);
+    }
+  };
+
+  const handlePrevious = () => setStep(step - 1);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,35 +43,25 @@ const App = () => {
 
   const validateForm = () => {
     let validationErrors = {};
-    
+
     if (!formData.bankId && formData.customerType === 'existing') validationErrors.bankId = 'Bank ID is required';
     if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
     if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
     if (!formData.address) validationErrors.address = 'Address is required';
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) validationErrors.email = 'Valid Email is required';
     if (!formData.contactNumber || !/^\d{10}$/.test(formData.contactNumber)) validationErrors.contactNumber = 'Valid Contact Number is required';
+    if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = 'Valid Email is required';
     if (!formData.aadharNumber || !/^\d{12}$/.test(formData.aadharNumber)) validationErrors.aadharNumber = 'Valid Aadhar Number is required';
-    if (!formData.panCardNumber || !/[A-Z]{5}[0-9]{4}[A-Z]{1}/.test(formData.panCardNumber)) validationErrors.panCardNumber = 'Valid PAN Card Number is required';
-    if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
-    if (!formData.product) validationErrors.product = 'Product selection is required';
-    if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
-    if (step === 3 && !formData.aadharFile) validationErrors.aadharFile = 'Aadhar Card is required';
-    if (step === 3 && !formData.panCardFile) validationErrors.panCardFile = 'PAN Card is required';
+    if (!formData.panCardNumber || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panCardNumber)) validationErrors.panCardNumber = 'Valid PAN Card Number is required';
+    if (!formData.monthlyIncome || isNaN(formData.monthlyIncome)) validationErrors.monthlyIncome = 'Valid Monthly Income is required';
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateForm()) setStep(step + 1);
-  };
-
-  const handlePrevious = () => setStep(step - 1);
-
   const handleSubmit = () => {
     if (validateForm()) {
       const dataText = `
-        Name: ${formData.fullName}
+        Full Name: ${formData.fullName}
         Bank ID: ${formData.bankId}
         Customer Type: ${formData.customerType}
         Date of Birth: ${formData.dob}
@@ -74,7 +73,7 @@ const App = () => {
         Monthly Income: ${formData.monthlyIncome}
         Product: ${formData.product}
       `;
-
+  
       const blob = new Blob([dataText], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -88,22 +87,10 @@ const App = () => {
     <ChakraProvider>
       <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
         <Heading as="h1" mb={6} textAlign="center">CC Application Form</Heading>
-
-        {step === 1 && (
-          <CustomerData
-            formData={formData}
-            handleInputChange={handleInputChange}
-            errors={errors}
-            setFormData={setFormData}
-            setErrors={setErrors}
-          />
-        )}
-        {step === 2 && (
-          <ProductSelection formData={formData} handleInputChange={handleInputChange} />
-        )}
-        {step === 3 && (
-          <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />
-        )}
+        
+        {step === 1 && <CustomerData formData={formData} handleInputChange={handleInputChange} errors={errors} />}
+        {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} />}
+        {step === 3 && <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />}
 
         <Box mt={6} display="flex" justifyContent="space-between">
           {step > 1 && (
