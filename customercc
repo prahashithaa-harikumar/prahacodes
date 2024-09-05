@@ -1,0 +1,82 @@
+import React, { useEffect, useState } from 'react';
+import { Box, FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
+
+const CustomerData = ({ formData, handleInputChange, errors }) => {
+  const [bankId, setBankId] = useState('');
+
+  useEffect(() => {
+    // Auto-populate fields when Bank ID is '123'
+    if (bankId === '123') {
+      handleInputChange({ target: { name: 'fullName', value: 'John Doe' } });
+      handleInputChange({ target: { name: 'dob', value: '1985-08-25' } });
+      handleInputChange({ target: { name: 'address', value: '123 Main St, New York' } });
+      handleInputChange({ target: { name: 'contactNumber', value: '123-456-7890' } });
+    }
+  }, [bankId, handleInputChange]);
+
+  const handleBankIdChange = (e) => {
+    setBankId(e.target.value);
+    handleInputChange(e);
+  };
+
+  return (
+    <Box>
+      <FormControl mb={4} isInvalid={errors.bankId}>
+        <FormLabel>Bank ID</FormLabel>
+        <Input
+          type="text"
+          name="bankId"
+          value={bankId}
+          onChange={handleBankIdChange}
+        />
+        <FormErrorMessage>{errors.bankId}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.fullName}>
+        <FormLabel>Full Name</FormLabel>
+        <Input
+          type="text"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.fullName}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.dob}>
+        <FormLabel>Date of Birth</FormLabel>
+        <Input
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.dob}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.address}>
+        <FormLabel>Address</FormLabel>
+        <Input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.address}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.contactNumber}>
+        <FormLabel>Contact Number</FormLabel>
+        <Input
+          type="text"
+          name="contactNumber"
+          value={formData.contactNumber}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
+      </FormControl>
+    </Box>
+  );
+};
+
+export default CustomerData;
