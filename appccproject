@@ -7,11 +7,16 @@ import FileUpload from './components/FileUpload';
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
+    customerType: 'new',
     bankId: '',
     fullName: '',
     dob: '',
     address: '',
     contactNumber: '',
+    email: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    monthlyIncome: '',
     product: 'Silver',
     idProofFile: null,
     aadharFile: null,
@@ -39,13 +44,22 @@ const App = () => {
   const validateForm = () => {
     let validationErrors = {};
     if (step === 1) {
-      if (!formData.bankId && !formData.fullName) validationErrors.bankId = 'Bank ID is required';
-      if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
-      if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
-      if (!formData.address) validationErrors.address = 'Address is required';
-      if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
+      if (formData.customerType === 'existing' && !formData.bankId) {
+        validationErrors.bankId = 'Bank ID is required for existing customers';
+      }
+      if (formData.customerType === 'new') {
+        if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
+        if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
+        if (!formData.address) validationErrors.address = 'Address is required';
+        if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
+        if (!formData.email) validationErrors.email = 'Email is required';
+        if (!formData.aadharNumber) validationErrors.aadharNumber = 'Aadhar Number is required';
+        if (!formData.panCardNumber) validationErrors.panCardNumber = 'PAN Card is required';
+        if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
+      }
     }
     if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
+
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
@@ -53,11 +67,17 @@ const App = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       const dataText = `
-        Full Name: ${formData.fullName}
+        Name: ${formData.fullName}
+        Bank ID: ${formData.bankId}
+        Customer Type: ${formData.customerType}
         Date of Birth: ${formData.dob}
         Address: ${formData.address}
+        Email: ${formData.email}
         Contact Number: ${formData.contactNumber}
-        Product: ${formData.product}
+        Aadhar Number: ${formData.aadharNumber}
+        PAN Card Number: ${formData.panCardNumber}
+        Monthly Income: ${formData.monthlyIncome}
+        Product Type: ${formData.product}
       `;
   
       const blob = new Blob([dataText], { type: 'text/plain' });
@@ -72,14 +92,14 @@ const App = () => {
   return (
     <ChakraProvider>
       <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
-        <Heading as="h1" mb={6} textAlign="center">CC Application Form</Heading>
+        <Heading as="h1" mb={6} textAlign="center">Credit Card Application Form</Heading>
         
         {step === 1 && (
           <CustomerData
             formData={formData}
             handleInputChange={handleInputChange}
+            setFormData={setFormData}
             errors={errors}
-            setFormData={setFormData}  // Pass the setFormData function
           />
         )}
         {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />}
