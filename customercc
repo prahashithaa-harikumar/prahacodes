@@ -13,7 +13,6 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
     const type = e.target.value;
     setCustomerType(type);
     if (type === 'new') {
-      // Clear form data for new customer
       setLocalFormData({
         ...formData,
         bankId: '',
@@ -27,7 +26,6 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
         monthlyIncome: ''
       });
     } else if (type === 'existing') {
-      // Retain the form data but clear bank ID
       setLocalFormData({
         ...formData,
         bankId: '',
@@ -38,7 +36,6 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
   const handleBankIdBlur = (e) => {
     const bankId = e.target.value;
     if (customerType === 'existing' && bankId === '123') {
-      // Simulate fetching and auto-populating data
       setLocalFormData({
         ...localFormData,
         fullName: 'John Doe',
@@ -60,7 +57,6 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
       [name]: value,
     });
     if (name in errors) {
-      // Clear the specific error when input changes
       setErrors({ ...errors, [name]: '' });
     }
   };
@@ -89,6 +85,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               value={localFormData.bankId}
               onChange={handleInputChangeLocal}
               onBlur={handleBankIdBlur}
+              required
             />
             {errors.bankId && <FormErrorMessage>{errors.bankId}</FormErrorMessage>}
           </FormControl>
@@ -99,6 +96,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               value={localFormData.fullName}
               onChange={handleInputChangeLocal}
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.fullName && <FormErrorMessage>{errors.fullName}</FormErrorMessage>}
           </FormControl>
@@ -110,6 +108,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               value={localFormData.dob}
               onChange={handleInputChangeLocal}
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.dob && <FormErrorMessage>{errors.dob}</FormErrorMessage>}
           </FormControl>
@@ -120,6 +119,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               value={localFormData.address}
               onChange={handleInputChangeLocal}
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
           </FormControl>
@@ -132,6 +132,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               pattern="\d{10}"
               title="Contact Number must be 10 digits"
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.contactNumber && <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>}
           </FormControl>
@@ -144,6 +145,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               pattern="\d{12}"
               title="Aadhar Number must be 12 digits"
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.aadharNumber && <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>}
           </FormControl>
@@ -156,6 +158,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
               title="PAN Card Number must be in format: AAAAA1234A"
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.panCardNumber && <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>}
           </FormControl>
@@ -167,6 +170,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               value={localFormData.monthlyIncome}
               onChange={handleInputChangeLocal}
               isDisabled={!localFormData.bankId} // Enable after Bank ID is entered
+              required
             />
             {errors.monthlyIncome && <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>}
           </FormControl>
@@ -184,6 +188,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               placeholder="Full Name"
               pattern="^[a-zA-Z\s]+$"
               title="Full Name must contain only letters and spaces"
+              required
             />
             {errors.fullName && <FormErrorMessage>{errors.fullName}</FormErrorMessage>}
           </FormControl>
@@ -194,6 +199,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               type="date"
               value={localFormData.dob}
               onChange={handleInputChangeLocal}
+              required
             />
             {errors.dob && <FormErrorMessage>{errors.dob}</FormErrorMessage>}
           </FormControl>
@@ -203,6 +209,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               name="address"
               value={localFormData.address}
               onChange={handleInputChangeLocal}
+              required
             />
             {errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
           </FormControl>
@@ -213,6 +220,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               type="email"
               value={localFormData.email}
               onChange={handleInputChangeLocal}
+              required
             />
             {errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
           </FormControl>
@@ -224,6 +232,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               onChange={handleInputChangeLocal}
               pattern="\d{10}"
               title="Contact Number must be 10 digits"
+              required
             />
             {errors.contactNumber && <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>}
           </FormControl>
@@ -235,6 +244,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               onChange={handleInputChangeLocal}
               pattern="\d{12}"
               title="Aadhar Number must be 12 digits"
+              required
             />
             {errors.aadharNumber && <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>}
           </FormControl>
@@ -246,6 +256,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               onChange={handleInputChangeLocal}
               pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
               title="PAN Card Number must be in format: AAAAA1234A"
+              required
             />
             {errors.panCardNumber && <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>}
           </FormControl>
@@ -256,6 +267,7 @@ const CustomerData = ({ formData, handleInputChange, errors, setFormData, setErr
               type="number"
               value={localFormData.monthlyIncome}
               onChange={handleInputChangeLocal}
+              required
             />
             {errors.monthlyIncome && <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>}
           </FormControl>
