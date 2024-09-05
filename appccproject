@@ -18,10 +18,14 @@ const App = () => {
     email: '',
     monthlyIncome: '',
     product: 'Silver',
+    idProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
   });
 
   const [errors, setErrors] = useState({});
 
+  // Function to handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -30,6 +34,7 @@ const App = () => {
     });
   };
 
+  // Auto-populate form fields for existing customers based on Bank ID
   const handleAutoPopulate = (e) => {
     if (e.target.value === '123') {
       setFormData({
@@ -46,41 +51,61 @@ const App = () => {
     }
   };
 
+  // Validation function
   const validateForm = () => {
     let validationErrors = {};
-
-    if (formData.customerType === 'Existing' && !formData.bankAccountId)
+    if (!formData.customerType) validationErrors.customerType = 'Customer Type is required';
+    if (formData.customerType === 'existing' && !formData.bankAccountId)
       validationErrors.bankAccountId = 'Bank Account ID is required';
     if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
     if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
     if (!formData.address) validationErrors.address = 'Address is required';
-    if (!formData.contactNumber.match(/^\d{10}$/))
-      validationErrors.contactNumber = 'Contact Number must be 10 digits';
-    if (
-      !formData.email.match(
-        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-      )
-    )
-      validationErrors.email = 'Invalid Email';
-    if (!formData.aadharNumber.match(/^\d{12}$/))
-      validationErrors.aadharNumber = 'Aadhaar must be 12 digits';
-    if (!formData.panCardNumber.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/))
-      validationErrors.panCardNumber = 'Invalid PAN';
-
+    if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
+    if (!formData.aadharNumber) validationErrors.aadharNumber = 'Aadhar Number is required';
+    if (!formData.panCardNumber) validationErrors.panCardNumber = 'PAN Card Number is required';
+    if (!formData.email) validationErrors.email = 'Email is required';
+    if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
+  // Handle next button click
   const handleNext = () => {
-    if (validateForm()) {
-      setStep(step + 1);
-    }
+    if (validateForm()) setStep(step + 1);
   };
 
+  // Handle previous button click
   const handlePrevious = () => {
     setStep(step - 1);
   };
 
+  // Handle form submission
+  const handleSubmit = () => {
+    if (validateForm()) {
+      const dataText = `
+        Customer Type: ${formData.customerType}
+        Full Name: ${formData.fullName}
+        Bank Account ID: ${formData.bankAccountId}
+        Date of Birth: ${formData.dob}
+        Address: ${formData.address}
+        Contact Number: ${formData.contactNumber}
+        Aadhar Number: ${formData.aadharNumber}
+        PAN Card Number: ${formData.panCardNumber}
+        Email: ${formData.email}
+        Monthly Income: ${formData.monthlyIncome}
+        Product: ${formData.product}
+      `;
+
+      const blob = new Blob([dataText], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'customer_application_data.txt';
+      link.click();
+      alert('Form submitted and data saved as a text file!');
+    }
+  };
+
+  // Handle cancel button click
   const handleCancel = () => {
     setFormData({
       customerType: '',
@@ -94,32 +119,11 @@ const App = () => {
       email: '',
       monthlyIncome: '',
       product: 'Silver',
+      idProofFile: null,
+      aadharFile: null,
+      panCardFile: null,
     });
-    setStep(1); // Reset to step 1
-  };
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      const dataText = `
-        Name: ${formData.fullName}
-        Bank ID: ${formData.bankAccountId}
-        Customer Type: ${formData.customerType}
-        Date of Birth: ${formData.dob}
-        Address: ${formData.address}
-        Email: ${formData.email}
-        Contact No: ${formData.contactNumber}
-        Aadhar: ${formData.aadharNumber}
-        PAN: ${formData.panCardNumber}
-        Monthly Income: ${formData.monthlyIncome}
-        Product Type: ${formData.product}
-      `;
-      const blob = new Blob([dataText], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'customer_data.txt';
-      link.click();
-      alert('Form submitted and data saved as a text file!');
-    }
+    setStep(1);
   };
 
   return (
@@ -138,18 +142,10 @@ const App = () => {
           />
         )}
         {step === 2 && (
-          <ProductSelection
-            formData={formData}
-            handleInputChange={handleInputChange}
-            errors={errors}
-          />
+          <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />
         )}
         {step === 3 && (
-          <FileUpload
-            formData={formData}
-            handleInputChange={handleInputChange}
-            errors={errors}
-          />
+          <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />
         )}
 
         <Box mt={6} display="flex" justifyContent="space-between">
@@ -168,9 +164,11 @@ const App = () => {
               Submit
             </Button>
           )}
-          <Button onClick={handleCancel} colorScheme="red">
-            Cancel
-          </Button>
+          {step === 3 && (
+            <Button onClick={handleCancel} colorScheme="red">
+              Cancel
+            </Button>
+          )}
         </Box>
 
         {Object.keys(errors).length > 0 && (
