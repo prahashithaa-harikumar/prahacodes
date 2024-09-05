@@ -7,11 +7,16 @@ import FileUpload from './FileUpload';
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    bankId: '',
+    customerType: '',
+    bankAccountId: '',
     fullName: '',
     dob: '',
     address: '',
     contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
     product: 'Silver',
     idProofFile: null,
     aadharFile: null,
@@ -20,14 +25,7 @@ const App = () => {
 
   const [errors, setErrors] = useState({});
 
-  const handleNext = () => {
-    if (validateForm()) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrevious = () => setStep(step - 1);
-
+  // Function to handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -36,30 +34,68 @@ const App = () => {
     });
   };
 
+  // Auto-populate form fields for existing customers based on Bank ID
+  const handleAutoPopulate = (e) => {
+    if (e.target.value === '123') {
+      setFormData({
+        ...formData,
+        fullName: 'John Doe',
+        dob: '1990-01-01',
+        address: '123 Main St, City, Country',
+        contactNumber: '9876543210',
+        aadharNumber: '123412341234',
+        panCardNumber: 'ABCDE1234F',
+        email: 'johndoe@example.com',
+        monthlyIncome: '50000',
+      });
+    }
+  };
+
+  // Validation function
   const validateForm = () => {
     let validationErrors = {};
-    if (!formData.bankId) validationErrors.bankId = 'Bank ID is required';
+    if (!formData.customerType) validationErrors.customerType = 'Customer Type is required';
+    if (formData.customerType === 'existing' && !formData.bankAccountId)
+      validationErrors.bankAccountId = 'Bank Account ID is required';
     if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
     if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
     if (!formData.address) validationErrors.address = 'Address is required';
     if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
-    if (!formData.product) validationErrors.product = 'Product selection is required';
-    if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
-
+    if (!formData.aadharNumber) validationErrors.aadharNumber = 'Aadhar Number is required';
+    if (!formData.panCardNumber) validationErrors.panCardNumber = 'PAN Card Number is required';
+    if (!formData.email) validationErrors.email = 'Email is required';
+    if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
+  // Handle next button click
+  const handleNext = () => {
+    if (validateForm()) setStep(step + 1);
+  };
+
+  // Handle previous button click
+  const handlePrevious = () => {
+    setStep(step - 1);
+  };
+
+  // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
       const dataText = `
+        Customer Type: ${formData.customerType}
         Full Name: ${formData.fullName}
+        Bank Account ID: ${formData.bankAccountId}
         Date of Birth: ${formData.dob}
         Address: ${formData.address}
         Contact Number: ${formData.contactNumber}
+        Aadhar Number: ${formData.aadharNumber}
+        PAN Card Number: ${formData.panCardNumber}
+        Email: ${formData.email}
+        Monthly Income: ${formData.monthlyIncome}
         Product: ${formData.product}
       `;
-  
+
       const blob = new Blob([dataText], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -69,14 +105,48 @@ const App = () => {
     }
   };
 
+  // Handle cancel button click
+  const handleCancel = () => {
+    setFormData({
+      customerType: '',
+      bankAccountId: '',
+      fullName: '',
+      dob: '',
+      address: '',
+      contactNumber: '',
+      aadharNumber: '',
+      panCardNumber: '',
+      email: '',
+      monthlyIncome: '',
+      product: 'Silver',
+      idProofFile: null,
+      aadharFile: null,
+      panCardFile: null,
+    });
+    setStep(1);
+  };
+
   return (
     <ChakraProvider>
       <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
-        <Heading as="h1" mb={6} textAlign="center">CC Application Form</Heading>
-        
-        {step === 1 && <CustomerData formData={formData} handleInputChange={handleInputChange} errors={errors} />}
-        {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />}
-        {step === 3 && <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />}
+        <Heading as="h1" mb={6} textAlign="center">
+          CC Application Form
+        </Heading>
+
+        {step === 1 && (
+          <CustomerData
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleAutoPopulate={handleAutoPopulate}
+            errors={errors}
+          />
+        )}
+        {step === 2 && (
+          <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />
+        )}
+        {step === 3 && (
+          <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />
+        )}
 
         <Box mt={6} display="flex" justifyContent="space-between">
           {step > 1 && (
@@ -94,10 +164,17 @@ const App = () => {
               Submit
             </Button>
           )}
+          {step === 3 && (
+            <Button onClick={handleCancel} colorScheme="red">
+              Cancel
+            </Button>
+          )}
         </Box>
 
         {Object.keys(errors).length > 0 && (
-          <Text color="red.500" mt={4}>Please fix the errors above before proceeding.</Text>
+          <Text color="red.500" mt={4}>
+            Please fix the errors above before proceeding.
+          </Text>
         )}
       </Box>
     </ChakraProvider>
