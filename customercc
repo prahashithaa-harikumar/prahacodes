@@ -1,233 +1,81 @@
-import React, { useEffect } from 'react';
-import { FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
 
 const CustomerData = ({ formData, handleInputChange, errors }) => {
-  const { customerType } = formData;
+  const [bankId, setBankId] = useState('');
 
   useEffect(() => {
-    // Clear form fields if switching to new customer
-    if (customerType === 'new') {
-      handleInputChange({ target: { name: 'fullName', value: '' } });
-      handleInputChange({ target: { name: 'dob', value: '' } });
-      handleInputChange({ target: { name: 'address', value: '' } });
-      handleInputChange({ target: { name: 'contactNumber', value: '' } });
-      handleInputChange({ target: { name: 'aadharNumber', value: '' } });
-      handleInputChange({ target: { name: 'panCardNumber', value: '' } });
-      handleInputChange({ target: { name: 'email', value: '' } });
-      handleInputChange({ target: { name: 'monthlyIncome', value: '' } });
+    // Auto-populate fields when Bank ID is '123'
+    if (bankId === '123') {
+      handleInputChange({ target: { name: 'fullName', value: 'John Doe' } });
+      handleInputChange({ target: { name: 'dob', value: '1985-08-25' } });
+      handleInputChange({ target: { name: 'address', value: '123 Main St, New York' } });
+      handleInputChange({ target: { name: 'contactNumber', value: '123-456-7890' } });
     }
-  }, [customerType, handleInputChange]);
+  }, [bankId, handleInputChange]);
+
+  const handleBankIdChange = (e) => {
+    setBankId(e.target.value);
+    handleInputChange(e);
+  };
 
   return (
-    <>
-      <FormControl isInvalid={!!errors.bankAccountId} mb={4}>
-        <FormLabel>Bank Account ID</FormLabel>
+    <Box>
+      <FormControl mb={4} isInvalid={errors.bankId}>
+        <FormLabel>Bank ID</FormLabel>
         <Input
-          name="bankAccountId"
-          value={formData.bankAccountId}
+          type="text"
+          name="bankId"
+          value={bankId}
+          onChange={handleBankIdChange}
+        />
+        <FormErrorMessage>{errors.bankId}</FormErrorMessage>
+      </FormControl>
+
+      <FormControl mb={4} isInvalid={errors.fullName}>
+        <FormLabel>Full Name</FormLabel>
+        <Input
+          type="text"
+          name="fullName"
+          value={formData.fullName}
           onChange={handleInputChange}
         />
-        <FormErrorMessage>{errors.bankAccountId}</FormErrorMessage>
+        <FormErrorMessage>{errors.fullName}</FormErrorMessage>
       </FormControl>
 
-      <FormControl mb={4}>
-        <FormLabel>Customer Type</FormLabel>
-        <select
-          name="customerType"
-          value={formData.customerType}
+      <FormControl mb={4} isInvalid={errors.dob}>
+        <FormLabel>Date of Birth</FormLabel>
+        <Input
+          type="date"
+          name="dob"
+          value={formData.dob}
           onChange={handleInputChange}
-        >
-          <option value="new">New</option>
-          <option value="existing">Existing</option>
-        </select>
+        />
+        <FormErrorMessage>{errors.dob}</FormErrorMessage>
       </FormControl>
 
-      {formData.customerType === 'existing' && (
-        <>
-          <FormControl isInvalid={!!errors.fullName} mb={4}>
-            <FormLabel>Full Name</FormLabel>
-            <Input
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
-          </FormControl>
+      <FormControl mb={4} isInvalid={errors.address}>
+        <FormLabel>Address</FormLabel>
+        <Input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.address}</FormErrorMessage>
+      </FormControl>
 
-          <FormControl isInvalid={!!errors.dob} mb={4}>
-            <FormLabel>Date of Birth</FormLabel>
-            <Input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.dob}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.address} mb={4}>
-            <FormLabel>Address</FormLabel>
-            <Input
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.address}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.contactNumber} mb={4}>
-            <FormLabel>Contact Number</FormLabel>
-            <Input
-              name="contactNumber"
-              value={formData.contactNumber}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.aadharNumber} mb={4}>
-            <FormLabel>Aadhar Number</FormLabel>
-            <Input
-              name="aadharNumber"
-              value={formData.aadharNumber}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.panCardNumber} mb={4}>
-            <FormLabel>PAN Card Number</FormLabel>
-            <Input
-              name="panCardNumber"
-              value={formData.panCardNumber}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.email} mb={4}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.email}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.monthlyIncome} mb={4}>
-            <FormLabel>Monthly Income</FormLabel>
-            <Input
-              name="monthlyIncome"
-              value={formData.monthlyIncome}
-              onChange={handleInputChange}
-              isDisabled={!formData.bankAccountId} // Enable after Bank Account ID is entered
-            />
-            <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
-          </FormControl>
-        </>
-      )}
-
-      {formData.customerType === 'new' && (
-        <>
-          <FormControl isInvalid={!!errors.fullName} mb={4}>
-            <FormLabel>Full Name</FormLabel>
-            <Input
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              placeholder="Full Name"
-            />
-            <FormErrorMessage>{errors.fullName}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.dob} mb={4}>
-            <FormLabel>Date of Birth</FormLabel>
-            <Input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleInputChange}
-              placeholder="Date of Birth"
-            />
-            <FormErrorMessage>{errors.dob}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.address} mb={4}>
-            <FormLabel>Address</FormLabel>
-            <Input
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              placeholder="Address"
-            />
-            <FormErrorMessage>{errors.address}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.contactNumber} mb={4}>
-            <FormLabel>Contact Number</FormLabel>
-            <Input
-              name="contactNumber"
-              value={formData.contactNumber}
-              onChange={handleInputChange}
-              placeholder="Contact Number"
-            />
-            <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.aadharNumber} mb={4}>
-            <FormLabel>Aadhar Number</FormLabel>
-            <Input
-              name="aadharNumber"
-              value={formData.aadharNumber}
-              onChange={handleInputChange}
-              placeholder="Aadhar Number"
-            />
-            <FormErrorMessage>{errors.aadharNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.panCardNumber} mb={4}>
-            <FormLabel>PAN Card Number</FormLabel>
-            <Input
-              name="panCardNumber"
-              value={formData.panCardNumber}
-              onChange={handleInputChange}
-              placeholder="PAN Card Number"
-            />
-            <FormErrorMessage>{errors.panCardNumber}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.email} mb={4}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Email"
-            />
-            <FormErrorMessage>{errors.email}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.monthlyIncome} mb={4}>
-            <FormLabel>Monthly Income</FormLabel>
-            <Input
-              name="monthlyIncome"
-              value={formData.monthlyIncome}
-              onChange={handleInputChange}
-              placeholder="Monthly Income"
-            />
-            <FormErrorMessage>{errors.monthlyIncome}</FormErrorMessage>
-          </FormControl>
-        </>
-      )}
-    </>
+      <FormControl mb={4} isInvalid={errors.contactNumber}>
+        <FormLabel>Contact Number</FormLabel>
+        <Input
+          type="text"
+          name="contactNumber"
+          value={formData.contactNumber}
+          onChange={handleInputChange}
+        />
+        <FormErrorMessage>{errors.contactNumber}</FormErrorMessage>
+      </FormControl>
+    </Box>
   );
 };
 
