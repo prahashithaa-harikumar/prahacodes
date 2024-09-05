@@ -1,37 +1,26 @@
 import React, { useState } from 'react';
 import { ChakraProvider, Box, Button, Heading, Text } from '@chakra-ui/react';
-import CustomerData from './components/CustomerData';
-import ProductSelection from './components/ProductSelection';
-import FileUpload from './components/FileUpload';
+import CustomerData from './CustomerData';
+import ProductSelection from './ProductSelection';
+import FileUpload from './FileUpload';
 
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    customerType: 'new',
-    bankId: '',
+    customerType: '',
+    bankAccountId: '',
     fullName: '',
     dob: '',
     address: '',
     contactNumber: '',
-    email: '',
     aadharNumber: '',
     panCardNumber: '',
+    email: '',
     monthlyIncome: '',
     product: 'Silver',
-    idProofFile: null,
-    aadharFile: null,
-    panCardFile: null,
   });
 
   const [errors, setErrors] = useState({});
-
-  const handleNext = () => {
-    if (validateForm()) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrevious = () => setStep(step - 1);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,49 +30,93 @@ const App = () => {
     });
   };
 
+  const handleAutoPopulate = (e) => {
+    if (e.target.value === '123') {
+      setFormData({
+        ...formData,
+        fullName: 'John Doe',
+        dob: '1990-01-01',
+        address: '123 Main St, City, Country',
+        contactNumber: '9876543210',
+        aadharNumber: '123412341234',
+        panCardNumber: 'ABCDE1234F',
+        email: 'johndoe@example.com',
+        monthlyIncome: '50000',
+      });
+    }
+  };
+
   const validateForm = () => {
     let validationErrors = {};
-    if (step === 1) {
-      if (formData.customerType === 'existing' && !formData.bankId) {
-        validationErrors.bankId = 'Bank ID is required for existing customers';
-      }
-      if (formData.customerType === 'new') {
-        if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
-        if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
-        if (!formData.address) validationErrors.address = 'Address is required';
-        if (!formData.contactNumber) validationErrors.contactNumber = 'Contact Number is required';
-        if (!formData.email) validationErrors.email = 'Email is required';
-        if (!formData.aadharNumber) validationErrors.aadharNumber = 'Aadhar Number is required';
-        if (!formData.panCardNumber) validationErrors.panCardNumber = 'PAN Card is required';
-        if (!formData.monthlyIncome) validationErrors.monthlyIncome = 'Monthly Income is required';
-      }
-    }
-    if (step === 3 && !formData.idProofFile) validationErrors.idProofFile = 'ID Proof is required';
+
+    if (formData.customerType === 'Existing' && !formData.bankAccountId)
+      validationErrors.bankAccountId = 'Bank Account ID is required';
+    if (!formData.fullName) validationErrors.fullName = 'Full Name is required';
+    if (!formData.dob) validationErrors.dob = 'Date of Birth is required';
+    if (!formData.address) validationErrors.address = 'Address is required';
+    if (!formData.contactNumber.match(/^\d{10}$/))
+      validationErrors.contactNumber = 'Contact Number must be 10 digits';
+    if (
+      !formData.email.match(
+        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+      )
+    )
+      validationErrors.email = 'Invalid Email';
+    if (!formData.aadharNumber.match(/^\d{12}$/))
+      validationErrors.aadharNumber = 'Aadhaar must be 12 digits';
+    if (!formData.panCardNumber.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/))
+      validationErrors.panCardNumber = 'Invalid PAN';
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateForm()) {
+      setStep(step + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    setStep(step - 1);
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      customerType: '',
+      bankAccountId: '',
+      fullName: '',
+      dob: '',
+      address: '',
+      contactNumber: '',
+      aadharNumber: '',
+      panCardNumber: '',
+      email: '',
+      monthlyIncome: '',
+      product: 'Silver',
+    });
+    setStep(1); // Reset to step 1
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
       const dataText = `
         Name: ${formData.fullName}
-        Bank ID: ${formData.bankId}
+        Bank ID: ${formData.bankAccountId}
         Customer Type: ${formData.customerType}
         Date of Birth: ${formData.dob}
         Address: ${formData.address}
         Email: ${formData.email}
-        Contact Number: ${formData.contactNumber}
-        Aadhar Number: ${formData.aadharNumber}
-        PAN Card Number: ${formData.panCardNumber}
+        Contact No: ${formData.contactNumber}
+        Aadhar: ${formData.aadharNumber}
+        PAN: ${formData.panCardNumber}
         Monthly Income: ${formData.monthlyIncome}
         Product Type: ${formData.product}
       `;
-  
       const blob = new Blob([dataText], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'customer_application_data.txt';
+      link.download = 'customer_data.txt';
       link.click();
       alert('Form submitted and data saved as a text file!');
     }
@@ -92,18 +125,32 @@ const App = () => {
   return (
     <ChakraProvider>
       <Box maxW="xl" mx="auto" p={6} bg="gray.100" rounded="md" boxShadow="md">
-        <Heading as="h1" mb={6} textAlign="center">Credit Card Application Form</Heading>
-        
+        <Heading as="h1" mb={6} textAlign="center">
+          CC Application Form
+        </Heading>
+
         {step === 1 && (
           <CustomerData
             formData={formData}
             handleInputChange={handleInputChange}
-            setFormData={setFormData}
+            handleAutoPopulate={handleAutoPopulate}
             errors={errors}
           />
         )}
-        {step === 2 && <ProductSelection formData={formData} handleInputChange={handleInputChange} errors={errors} />}
-        {step === 3 && <FileUpload formData={formData} handleInputChange={handleInputChange} errors={errors} />}
+        {step === 2 && (
+          <ProductSelection
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
+        )}
+        {step === 3 && (
+          <FileUpload
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
+        )}
 
         <Box mt={6} display="flex" justifyContent="space-between">
           {step > 1 && (
@@ -121,10 +168,15 @@ const App = () => {
               Submit
             </Button>
           )}
+          <Button onClick={handleCancel} colorScheme="red">
+            Cancel
+          </Button>
         </Box>
 
         {Object.keys(errors).length > 0 && (
-          <Text color="red.500" mt={4}>Please fix the errors above before proceeding.</Text>
+          <Text color="red.500" mt={4}>
+            Please fix the errors above before proceeding.
+          </Text>
         )}
       </Box>
     </ChakraProvider>
