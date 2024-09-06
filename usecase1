@@ -1,80 +1,44 @@
-
+({ handleInputChange }) => {
   const toast = useToast();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const validateForm = (e) => {
+    e.preventDefault();
 
-  // Mandatory field validation function
-  const validateMandatoryFields = () => {
-    const mandatoryFields = [
-      { field: 'fullName', message: 'Full Name is required' },
-      { field: 'dob', message: 'Date of Birth is required' },
-      { field: 'address', message: 'Address is required' },
-      { field: 'email', message: 'Email is required' },
-      { field: 'contactNumber', message: 'Contact Number is required' },
-      { field: 'aadharNumber', message: 'Aadhaar Number is required' },
-      { field: 'panCardNumber', message: 'PAN Card Number is required' },
-      { field: 'monthlyIncome', message: 'Monthly Income is required' },
-      { field: 'bankAccountId', message: 'Bank Account ID is required' },
-    ];
+    // Get all file inputs
+    const fileInputs = {
+      aadharFile: document.getElementById('aadharFile'),
+      panCardFile: document.getElementById('panCardFile'),
+      incomeProof: document.getElementById('incomeProof'),
+    };
 
-    for (let i = 0; i < mandatoryFields.length; i++) {
-      const { field, message } = mandatoryFields[i];
-      if (!formData[field]) {
-        toast({ title: message, status: 'error', duration: 3000 });
-        return false;
+    // Validate each file input
+    let valid = true;
+    Object.keys(fileInputs).forEach((key) => {
+      const fileInput = fileInputs[key];
+      if (fileInput.files.length === 0) {
+        toast({
+          title: 'Validation Error',
+          description: `Please upload your ${key.replace(/([A-Z])/g, ' $1').toLowerCase().replace('file', '')}.`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        valid = false;
+      } else {
+        const file = fileInput.files[0];
+        const fileType = file.type;
+        if (fileType !== 'image/jpeg' && fileType !== 'application/pdf') {
+          toast({
+            title: 'Validation Error',
+            description: `The ${key.replace(/([A-Z])/g, ' $1').toLowerCase().replace('file', '')} must be in JPG or PDF format.`,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          valid = false;
+        }
       }
-    }
-    return true;
-  };
+    });
 
-  // Pattern validation function
-  const validatePatterns = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const contactPattern = /^[6-9]\d{9}$/;
-    const aadharPattern = /^\d{12}$/;
-    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    const bankAccountPattern = /^\d{8}$/;
-
-    if (!emailPattern.test(formData.email)) {
-      toast({ title: 'Invalid Email format', status: 'error', duration: 3000 });
-      return false;
-    }
-    if (!contactPattern.test(formData.contactNumber)) {
-      toast({ title: 'Invalid Contact Number format', status: 'error', duration: 3000 });
-      return false;
-    }
-    if (!aadharPattern.test(formData.aadharNumber)) {
-      toast({ title: 'Invalid Aadhaar Number format', status: 'error', duration: 3000 });
-      return false;
-    }
-    if (!panPattern.test(formData.panCardNumber)) {
-      toast({ title: 'Invalid PAN Card Number format', status: 'error', duration: 3000 });
-      return false;
-    }
-    if (isNaN(formData.monthlyIncome) || parseFloat(formData.monthlyIncome) <= 0) {
-      toast({ title: 'Monthly Income must be a valid number', status: 'error', duration: 3000 });
-      return false;
-    }
-    if (!bankAccountPattern.test(formData.bankAccountId)) {
-      toast({ title: 'Bank Account ID must be exactly 8 digits', status: 'error', duration: 3000 });
-      return false;
-    }
-
-    return true;
-  };
-
-  // Form validation handler
-  const validateForm = () => {
-    if (!validateMandatoryFields()) {
-      return false;
-    }
-    if (!validatePatterns()) {
-      return false;
-    }
-
-    toast({ title: 'Form Submitted Successfully', status: 'success', duration: 3000 });
-    return true;
+    return valid; // Return whether the form is valid or not
   };
