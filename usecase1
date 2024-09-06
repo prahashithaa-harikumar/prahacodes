@@ -1,109 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Form</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
-    <style>
-        .error { color: red; }
-    </style>
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Add Customer</h2>
-    <form id="customerForm">
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter Name">
-            <span class="error" id="nameError"></span>
-        </div>
-        <div class="form-group">
-            <label for="email">Email Id:</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter Email">
-            <span class="error" id="emailError"></span>
-        </div>
-        <div class="form-group">
-            <label for="contact">Contact No:</label>
-            <input type="text" class="form-control" id="contact" placeholder="Enter Contact No">
-            <span class="error" id="contactError"></span>
-        </div>
-        <div class="form-group">
-            <label for="accountType">Account Type:</label>
-            <select class="form-control" id="accountType">
-                <option value="">Select account type</option>
-                <option value="savings">Savings</option>
-                <option value="current">Current</option>
-            </select>
-            <span class="error" id="accountTypeError"></span>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Customer</button>
-    </form>
-    <h3 class="mt-5">Customer List</h3>
-    <table class="table table-bordered mt-3" id="customerTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>Account Type</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
+ const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const contactPattern = /^[6-9]\d{9}$/;
+    const aadharPattern = /^\d{12}$/;
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('customerForm');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            let valid = true;
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const contact = document.getElementById('contact').value;
-            const accountType = document.getElementById('accountType').value;
-            
-            document.getElementById('nameError').textContent = '';
-            document.getElementById('emailError').textContent = '';
-            document.getElementById('contactError').textContent = '';
-            document.getElementById('accountTypeError').textContent = '';
-            
-            if (!/^[A-Za-z]+$/.test(name)) {
-                document.getElementById('nameError').textContent = 'Please enter only alphabets';
-                valid = false;
-            }
-            
-            if (!/^\S+@\S+\.\S+$/.test(email)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email id';
-                valid = false;
-            }
-            
-            if (!/^[7-9][0-9]{9}$/.test(contact)) {
-                document.getElementById('contactError').textContent = 'Please enter a valid 10-digit contact number starting with 7, 8, or 9';
-                valid = false;
-            }
-            
-            if (accountType === '') {
-                document.getElementById('accountTypeError').textContent = 'Please select an account type';
-                valid = false;
-            }
-            
-            if (valid) {
-                const row = `<tr>
-                                <td>${name}</td>
-                                <td>${email}</td>
-                                <td>${contact}</td>
-                                <td>${accountType}</td>
-                            </tr>`;
-                document.querySelector('#customerTable tbody').innerHTML += row;
-                form.reset();
-            }
-        });
-    });
-</script>
-</body>
-</html>
+    if (!formData.fullName) {
+      toast({ title: 'Full Name is required', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.dob) {
+      toast({ title: 'Date of Birth is required', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.address) {
+      toast({ title: 'Address is required', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.email || !emailPattern.test(formData.email)) {
+      toast({ title: 'Invalid Email', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.contactNumber || !contactPattern.test(formData.contactNumber)) {
+      toast({ title: 'Invalid Contact Number', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.aadharNumber || !aadharPattern.test(formData.aadharNumber)) {
+      toast({ title: 'Invalid Aadhaar Number', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.panCardNumber || !panPattern.test(formData.panCardNumber)) {
+      toast({ title: 'Invalid PAN Card Number', status: 'error', duration: 3000 });
+      return false;
+    }
+    if (!formData.monthlyIncome) {
+      toast({ title: 'Monthly Income is required', status: 'error', duration: 3000 });
+      return false;
+    }
+
+    toast({ title: 'Form Submitted Successfully', status: 'success', duration: 3000 });
+    return true;
+  };
