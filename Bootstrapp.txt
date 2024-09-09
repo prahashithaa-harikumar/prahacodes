@@ -1,35 +1,56 @@
-const handleSubmit = async () => {
+const handleSubmit = async (e) => {
+  e.preventDefault();  // Prevent form from submitting the traditional way
+
+  // Assuming your data object is called dataText, which you want to send
+  const dataText = {
+    customerType: formData.customerType,
+    fullName: formData.fullName,
+    bankAccountId: formData.bankAccountId,
+    dob: formData.dob,
+    address: formData.address,
+    contactNumber: formData.contactNumber,
+    aadharNumber: formData.aadharNumber,
+    panCardNumber: formData.panCardNumber,
+    email: formData.email,
+    monthlyIncome: formData.monthlyIncome,
+    product: formData.product
+  };
+
   try {
-    const dataText = {
-      customerType: customerType, 
-      fullName: formData.fullName,
-      bankAccountId: formData.bankAccountId,
-      dob: formData.dob,
-      address: formData.address,
-      contactNumber: formData.contactNumber,
-      aadharNumber: formData.aadharNumber,
-      panCardNumber: formData.panCardNumber,
-      email: formData.email,
-      monthlyIncome: formData.monthlyIncome,
-      product: formData.product,
-    };
-    
-    const response = await fetch('http://localhost:8080/api/saveCustomer', {
+    const response = await fetch('https://run.mocky.io/v3/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(dataText),
+      body: JSON.stringify(dataText),  // Ensure the data is in the correct format
     });
-    
+
     if (response.ok) {
-      const result = await response.json();
-      alert('Form data submitted successfully');
-      console.log(result); // handle the returned data
+      // Read response as text to check for empty response
+      const textResponse = await response.text(); 
+
+      // Check if the response is empty
+      if (textResponse) {
+        try {
+          // Parse the text response as JSON
+          const result = JSON.parse(textResponse);
+          alert('Data submitted successfully');  // Show success alert
+          console.log(result);  // Handle the returned data if needed
+        } catch (error) {
+          console.error('Error parsing JSON response:', error);
+          alert('Error parsing server response');  // Alert the user if parsing fails
+        }
+      } else {
+        // No content received from the server
+        alert('No content received from the server.');
+      }
     } else {
+      // If the server returns a non-OK status
       alert('Error submitting form data');
     }
   } catch (error) {
-    console.error('Error:', error);
+    // Catch any network or other errors
+    console.error('Fetch error:', error);
+    alert('An error occurred while submitting the form');
   }
 };
