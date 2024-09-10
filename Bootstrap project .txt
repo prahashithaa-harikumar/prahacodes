@@ -1,13 +1,17 @@
-@RestController
-@RequestMapping("/api")
-public class CustomerController {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-    @Autowired
-    private CustomerService customerService;
+@Entity
+public class CreditApplication {
 
-    @GetMapping("/process-file")
-    public ResponseEntity<String> processFile(@RequestParam String filePath) {
-        customerService.processFormDataFromFile(filePath);
-        return ResponseEntity.ok("Data processed from file successfully");
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String bankAccountId;
+    private String product;
+
+    // Getters and Setters
+    // ...
 }
