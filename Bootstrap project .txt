@@ -1,107 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Page</title>
-    <!-- Bootstrap 4.6.2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .nav-item img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-        }
+@RestController
+@RequestMapping("/api")
+public class CustomerController {
 
-        .header-image {
-            width: 50px;
-            height: 50px;
-        }
+    @Autowired
+    private CustomerService customerService;
 
-        .article-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        .article {
-            height: 350px; /* Adjust as needed */
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <header class="d-flex align-items-center py-3">
-            <img src="left-corner-image.jpg" alt="Left Corner Image" class="header-image mr-3">
-            <h1 class="h4 m-0">Build Below Web Page Using HTML and CSS</h1>
-        </header>
-
-        <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container-fluid">
-                <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="index.html">
-                        <img src="home-icon.png" alt="Home Icon"> Home
-                    </a>
-                    <a class="nav-item nav-link" href="product.html">Our Product</a>
-                    <a class="nav-item nav-link" href="promotions.html">Promotions</a>
-                    <a class="nav-item nav-link" href="services.html">Services</a>
-                    <a class="nav-item nav-link" href="help.html">Help</a>
-                    <a class="nav-item nav-link" href="search.html">
-                        <img src="search-icon.png" alt="Search Icon">
-                    </a>
-                    <a class="nav-item nav-link" href="login.html">
-                        <img src="login-icon.png" alt="Login Icon"> Login
-                    </a>
-                </div>
-                <img src="right-corner-image.jpg" alt="Right Corner Image" class="header-image">
-            </div>
-        </nav>
-
-        <!-- Articles Section -->
-        <section class="row text-center">
-            <div class="col-12 col-md-6 col-lg-2 mb-4">
-                <div class="article border p-3">
-                    <img src="article1-image.jpg" alt="Article 1 Image" class="article-image">
-                    <h2 class="h5"><a href="article1.html">Article 1</a></h2>
-                    <p>Brief content of Article 1...</p>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-2 mb-4">
-                <div class="article border p-3">
-                    <img src="article2-image.jpg" alt="Article 2 Image" class="article-image">
-                    <h2 class="h5"><a href="article2.html">Article 2</a></h2>
-                    <p>Brief content of Article 2...</p>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-2 mb-4">
-                <div class="article border p-3">
-                    <img src="article3-image.jpg" alt="Article 3 Image" class="article-image">
-                    <h2 class="h5"><a href="article3.html">Article 3</a></h2>
-                    <p>Brief content of Article 3...</p>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-2 mb-4">
-                <div class="article border p-3">
-                    <img src="article4-image.jpg" alt="Article 4 Image" class="article-image">
-                    <h2 class="h5"><a href="article4.html">Article 4</a></h2>
-                    <p>Brief content of Article 4...</p>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-2 mb-4">
-                <div class="article border p-3">
-                    <img src="article5-image.jpg" alt="Article 5 Image" class="article-image">
-                    <h2 class="h5"><a href="article5.html">Article 5</a></h2>
-                    <p>Brief content of Article 5...</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bootstrap 4.6.2 JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    @GetMapping("/process-file")
+    public ResponseEntity<String> processFile(@RequestParam String filePath) {
+        customerService.processFormDataFromFile(filePath);
+        return ResponseEntity.ok("Data processed from file successfully");
+    }
+}
