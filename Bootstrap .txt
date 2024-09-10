@@ -1,17 +1,10 @@
-public class FormData {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-    private String customerType;
-    private String fullName;
-    private String bankAccountId;
-    private String dob;
-    private String address;
-    private String contactNumber;
-    private String aadharNumber;
-    private String panCardNumber;
-    private String email;
-    private String monthlyIncome;
-    private String product;
+@SpringBootApplication
+public class CreditApplicationMain {
 
-    // Getters and Setters
-    // ...
+    public static void main(String[] args) {
+        SpringApplication.run(CreditApplicationMain.class, args);
+    }
 }
