@@ -1,37 +1,109 @@
-const handleSubmit = async (e) => {
-  e.preventDefault(); // Prevent form from submitting the traditional way
+@Service
+public class CustomerService {
 
-  // Assuming your data object is called dataText, which you want to send
-  const dataText = {
-    customerType: customerType,
-    fullName: formData.fullName,
-    bankAccountId: formData.bankAccountId,
-    dob: formData.dob,
-    address: formData.address,
-    contactNumber: formData.contactNumber,
-    aadharNumber: formData.aadharNumber,
-    panCardNumber: formData.panCardNumber,
-    email: formData.email,
-    monthlyIncome: formData.monthlyIncome, // Fixed property name
-    product: formData.product
-  };
+    @Autowired
+    private CustomerRepository customerRepository;
 
-  try {
-    const response = await fetch(
-      'https://833d5a49-449-45e8-3396-799725cd4fcd.mock.pstmn.io/post',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dataText)
-      }
-    );
+    @Autowired
+    private CreditApplicationRepository creditApplicationRepository;
 
-    // Handle the response
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+    public void processFormDataFromFile(String filePath) {
+        FormData formData = readFile(filePath);
+        if (formData != null) {
+            if ("existing".equalsIgnoreCase(formData.getCustomerType())) {
+                updateExistingCustomer(formData);
+            } else {
+                createNewCustomer(formData);
+            }
+        }
+    }
+
+    private FormData readFile(String filePath) {
+        FormData formData = new FormData();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("Customer Type:")) {
+                    formData.setCustomerType(line.split(": ")[1].trim());
+                } else if (line.contains("Full Name:")) {
+                    formData.setFullName(line.split(": ")[1].trim());
+                } else if (line.contains("Bank Account ID:")) {
+                    formData.setBankAccountId(line.split(": ")[1].trim());
+                } else if (line.contains("Date of Birth:")) {
+                    formData.setDob(line.split(": ")[1].trim());
+                } else if (line.contains("Address:")) {
+                    formData.setAddress(line.split(": ")[1].trim());
+                } else if (line.contains("Contact Number:")) {
+                    formData.setContactNumber(line.split(": ")[1].trim());
+                } else if (line.contains("Aadhar Number:")) {
+                    formData.setAadharNumber(line.split(": ")[1].trim());
+                } else if (line.contains("PAN Card Number:")) {
+                    formData.setPanCardNumber(line.split(": ")[1].trim());
+                } else if (line.contains("Email:")) {
+                    formData.setEmail(line.split(": ")[1].trim());
+                } else if (line.contains("Monthly Income:")) {
+                    formData.setMonthlyIncome(line.split(": ")[1].trim());
+                } else if (line.contains("Product:")) {
+                    formData.setProduct(line.split(": ")[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return formData;
+    }
+
+    private void updateExistingCustomer(FormData formData) {
+        // Fetch and update existing customer logic
+        Customer existingCustomer = customerRepository.findByBankAccountId(formData.getBankAccountId());
+        if (existingCustomer != null) {
+            // Update customer fields
+            existingCustomer.setFullName(formData.getFullName());
+            existingCustomer.setDob(formData.getDob());
+            existingCustomer.setAddress(formData.getAddress());
+            existingCustomer.setContactNumber(formData.getContactNumber());
+            existingCustomer.setAadharNumber(formData.getAadharNumber());
+            existingCustomer.setPanCardNumber(formData.getPanCardNumber());
+            existingCustomer.setEmail(formData.getEmail());
+            existingCustomer.setMonthlyIncome(formData.getMonthlyIncome());
+
+            customerRepository.save(existingCustomer);
+
+            // Append to credit application database
+            CreditApplication creditApplication = new CreditApplication();
+            creditApplication.setBankAccountId(formData.getBankAccountId());
+            creditApplication.setProduct(formData.getProduct());
+            creditApplicationRepository.save(creditApplication);
+        }
+    }
+
+    private void createNewCustomer(FormData formData) {
+        // Generate new bank ID
+        String bankId = generateBankId();
+
+        // Create new customer
+        Customer newCustomer = new Customer();
+        newCustomer.setBankAccountId(bankId);
+        newCustomer.setFullName(formData.getFullName());
+        newCustomer.setDob(formData.getDob());
+        newCustomer.setAddress(formData.getAddress());
+        newCustomer.setContactNumber(formData.getContactNumber());
+        newCustomer.setAadharNumber(formData.getAadharNumber());
+        newCustomer.setPanCardNumber(formData.getPanCardNumber());
+        newCustomer.setEmail(formData.getEmail());
+        newCustomer.setMonthlyIncome(formData.getMonthlyIncome());
+
+        customerRepository.save(newCustomer);
+
+        // Append to credit application database
+        CreditApplication creditApplication = new CreditApplication();
+        creditApplication.setBankAccountId(bankId);
+        creditApplication.setProduct(formData.getProduct());
+        creditApplicationRepository.save(creditApplication);
+    }
+
+    private String generateBankId() {
+        return "IN" + String.format("%012d", new Random().nextInt(1000000000000L));
+    }
+}
