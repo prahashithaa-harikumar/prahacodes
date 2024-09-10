@@ -1,80 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Responsive Web Page</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .navbar {
-            background-color: #f8f9fa;
-        }
-        .hero-section {
-            background-image: url('images/your-image-file.jpg'); /* Replace with the actual path to your image */
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 100px 20px;
-        }
-        .hero-section h1 {
-            font-size: 2.5rem;
-        }
-        .hero-section p {
-            font-size: 1.25rem;
-        }
-    </style>
-</head>
-<body>
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#">
-            <img src="images/your-logo-file.png" alt="Standard Chartered" height="40"> <!-- Replace with the actual path to your logo -->
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About us</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Corporate & Investment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Wealth & Retail</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Ventures</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Investors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Insights</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Media</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Careers</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+import java.io.IOException;
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <h1>From here, possibilities are everywhere</h1>
-        <p>We're here to connect your potential to possibilities in the world's most dynamic markets.</p>
-        <a href="#" class="btn btn-primary">Learn more</a>
-    </section>
+@RestController
+@RequestMapping("/credit-application")
+public class CreditApplicationController {
 
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
-</body>
-</html>
+    @Autowired
+    private CreditApplicationService creditApplicationService;
+
+    @PostMapping("/process")
+    public String processFile() {
+        try {
+            creditApplicationService.processTextFile();
+            return "Customer and credit application processed successfully";
+        } catch (IOException e) {
+            return "Error processing the file: " + e.getMessage();
+        }
+    }
+}
