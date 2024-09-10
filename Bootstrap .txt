@@ -1,9 +1,17 @@
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class FormData {
 
-@SpringBootApplication
-public class CustomerApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(CustomerApplication.class, args);
-    }
+    private String customerType;
+    private String fullName;
+    private String bankAccountId;
+    private String dob;
+    private String address;
+    private String contactNumber;
+    private String aadharNumber;
+    private String panCardNumber;
+    private String email;
+    private String monthlyIncome;
+    private String product;
+
+    // Getters and Setters
+    // ...
 }
