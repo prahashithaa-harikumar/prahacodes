@@ -1,109 +1,23 @@
-@Service
-public class CustomerService {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private CreditApplicationRepository creditApplicationRepository;
-
-    public void processFormDataFromFile(String filePath) {
-        FormData formData = readFile(filePath);
-        if (formData != null) {
-            if ("existing".equalsIgnoreCase(formData.getCustomerType())) {
-                updateExistingCustomer(formData);
-            } else {
-                createNewCustomer(formData);
-            }
-        }
-    }
-
-    private FormData readFile(String filePath) {
-        FormData formData = new FormData();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("Customer Type:")) {
-                    formData.setCustomerType(line.split(": ")[1].trim());
-                } else if (line.contains("Full Name:")) {
-                    formData.setFullName(line.split(": ")[1].trim());
-                } else if (line.contains("Bank Account ID:")) {
-                    formData.setBankAccountId(line.split(": ")[1].trim());
-                } else if (line.contains("Date of Birth:")) {
-                    formData.setDob(line.split(": ")[1].trim());
-                } else if (line.contains("Address:")) {
-                    formData.setAddress(line.split(": ")[1].trim());
-                } else if (line.contains("Contact Number:")) {
-                    formData.setContactNumber(line.split(": ")[1].trim());
-                } else if (line.contains("Aadhar Number:")) {
-                    formData.setAadharNumber(line.split(": ")[1].trim());
-                } else if (line.contains("PAN Card Number:")) {
-                    formData.setPanCardNumber(line.split(": ")[1].trim());
-                } else if (line.contains("Email:")) {
-                    formData.setEmail(line.split(": ")[1].trim());
-                } else if (line.contains("Monthly Income:")) {
-                    formData.setMonthlyIncome(line.split(": ")[1].trim());
-                } else if (line.contains("Product:")) {
-                    formData.setProduct(line.split(": ")[1].trim());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return formData;
-    }
-
-    private void updateExistingCustomer(FormData formData) {
-        // Fetch and update existing customer logic
-        Customer existingCustomer = customerRepository.findByBankAccountId(formData.getBankAccountId());
-        if (existingCustomer != null) {
-            // Update customer fields
-            existingCustomer.setFullName(formData.getFullName());
-            existingCustomer.setDob(formData.getDob());
-            existingCustomer.setAddress(formData.getAddress());
-            existingCustomer.setContactNumber(formData.getContactNumber());
-            existingCustomer.setAadharNumber(formData.getAadharNumber());
-            existingCustomer.setPanCardNumber(formData.getPanCardNumber());
-            existingCustomer.setEmail(formData.getEmail());
-            existingCustomer.setMonthlyIncome(formData.getMonthlyIncome());
-
-            customerRepository.save(existingCustomer);
-
-            // Append to credit application database
-            CreditApplication creditApplication = new CreditApplication();
-            creditApplication.setBankAccountId(formData.getBankAccountId());
-            creditApplication.setProduct(formData.getProduct());
-            creditApplicationRepository.save(creditApplication);
-        }
-    }
-
-    private void createNewCustomer(FormData formData) {
-        // Generate new bank ID
-        String bankId = generateBankId();
-
-        // Create new customer
-        Customer newCustomer = new Customer();
-        newCustomer.setBankAccountId(bankId);
-        newCustomer.setFullName(formData.getFullName());
-        newCustomer.setDob(formData.getDob());
-        newCustomer.setAddress(formData.getAddress());
-        newCustomer.setContactNumber(formData.getContactNumber());
-        newCustomer.setAadharNumber(formData.getAadharNumber());
-        newCustomer.setPanCardNumber(formData.getPanCardNumber());
-        newCustomer.setEmail(formData.getEmail());
-        newCustomer.setMonthlyIncome(formData.getMonthlyIncome());
-
-        customerRepository.save(newCustomer);
-
-        // Append to credit application database
-        CreditApplication creditApplication = new CreditApplication();
-        creditApplication.setBankAccountId(bankId);
-        creditApplication.setProduct(formData.getProduct());
-        creditApplicationRepository.save(creditApplication);
-    }
-
-    private String generateBankId() {
-        return "IN" + String.format("%012d", new Random().nextInt(1000000000000L));
-    }
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    Customer findByBankAccountId(String bankAccountId);
 }
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CreditApplicationRepository extends JpaRepository<CreditApplication, Long> {
+}
+
+
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
