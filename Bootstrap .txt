@@ -1,28 +1,271 @@
-import React from "react";
-import { Box, Text, Heading } from "@chakra-ui/react";
+import {
+  Step,
+  useSteps,
+  Stepper,
+  StepIndicator,
+  StepStatus,
+  StepIcon,
+  StepSeparator,
+  Stack,
+  Button,
+  HStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  Th,
+  Thead,
+} from '@chakra-ui/react';
 
-const DataPreview = ({ formData }) => {
+import CreditForm from '../components/Application/CreditForm/CreditForm';
+import DocumentUpload from '../components/Application/DocumentUpload/DocumentUpload';
+import CreditCustomer from '../components/Application/CreditCustomer/CreditCustomer';
+import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+
+const steps = [
+  { description: 'Customer Details' },
+  { description: 'Credit Offer' },
+  { description: 'Documents Upload' },
+];
+
+const FormPage = () => {
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: steps.length,
+  });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [customerType, setCustomerType] = useState(null);
+  const [selectedProductDetails, setSelectedProductDetails] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    bankAccountId: '',
+    fullName: '',
+    dob: '',
+    address: '',
+    contactNumber: '',
+    aadharNumber: '',
+    panCardNumber: '',
+    email: '',
+    monthlyIncome: '',
+    product: '',
+    incomeProofFile: null,
+    aadharFile: null,
+    panCardFile: null,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCancel = () => {
+    setCustomerType('');
+    setFormData({
+      bankAccountId: '',
+      fullName: '',
+      dob: '',
+      address: '',
+      contactNumber: '',
+      aadharNumber: '',
+      panCardNumber: '',
+      email: '',
+      monthlyIncome: '',
+      product: '',
+      incomeProofFile: null,
+      aadharFile: null,
+      panCardFile: null,
+    });
+    setActiveStep(0);
+  };
+
+  const handleSubmit = async (e) => {
+    const confirmation = window.confirm('Are you sure you want to submit the form?');
+    if (confirmation) {
+      console.log('Form submission');
+      alert('Form submitted successfully!');
+      setIsSubmitted(true);
+    } else {
+      console.log('Submission cancelled');
+    }
+  };
+
+  const handlePreview = () => {
+    onOpen(); // Open the modal
+  };
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      dob: '',
+      address: '',
+      contactNumber: '',
+      aadharNumber: '',
+      panCardNumber: '',
+      email: '',
+      monthlyIncome: '',
+      product: '',
+    });
+  }, [customerType]);
+
   return (
-    <Box>
-      <Heading as="h2" size="lg" mb={4}>
-        Preview Data
-      </Heading>
-      <Text><strong>Customer Type:</strong> {formData.customerType}</Text>
-      <Text><strong>Bank Account ID:</strong> {formData.bankAccountId}</Text>
-      <Text><strong>Full Name:</strong> {formData.fullName}</Text>
-      <Text><strong>Date of Birth:</strong> {formData.dob}</Text>
-      <Text><strong>Address:</strong> {formData.address}</Text>
-      <Text><strong>Contact Number:</strong> {formData.contactNumber}</Text>
-      <Text><strong>Aadhar Number:</strong> {formData.aadharNumber}</Text>
-      <Text><strong>PAN Card Number:</strong> {formData.panCardNumber}</Text>
-      <Text><strong>Email:</strong> {formData.email}</Text>
-      <Text><strong>Monthly Income:</strong> {formData.monthlyIncome}</Text>
-      <Text><strong>Product:</strong> {formData.product}</Text>
-      <Text><strong>ID Proof File:</strong> {formData.idProofFile?.name || "No file uploaded"}</Text>
-      <Text><strong>Aadhar File:</strong> {formData.aadharFile?.name || "No file uploaded"}</Text>
-      <Text><strong>PAN Card File:</strong> {formData.panCardFile?.name || "No file uploaded"}</Text>
-    </Box>
+    <div className="flex justify-center mt-7">
+      <div className="w-2/3">
+        <Stack>
+          <Stepper size="sm" index={activeStep}>
+            {steps.map((_step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus complete={<StepIcon />} />
+                </StepIndicator>
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+        </Stack>
+
+        <div className="my-5 shadow-xl p-11 pb-24 rounded">
+          {activeStep === 0 && (
+            <CreditCustomer
+              formData={formData}
+              handleInputChange={handleInputChange}
+              customerType={customerType}
+              setCustomerType={setCustomerType}
+            />
+          )}
+
+          {activeStep === 1 && (
+            <CreditForm
+              formData={formData}
+              setFormData={setFormData}
+              selectedProductDetails={selectedProductDetails}
+              setSelectedProductDetails={setSelectedProductDetails}
+            />
+          )}
+
+          {activeStep === 2 && (
+            <DocumentUpload handleInputChange={handleInputChange} />
+          )}
+
+          <HStack className="mt-5 float-end">
+            {activeStep === 0 ? (
+              <Link to={'/'}>
+                <Button size={'sm'} className="text-xs" colorScheme="blue" fontWeight="100">
+                  Go Back
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                size={'sm'}
+                className="text-xs"
+                colorScheme="blue"
+                fontWeight="100"
+                onClick={() => {
+                  if (activeStep > 0) setActiveStep(activeStep - 1);
+                }}
+              >
+                Previous
+              </Button>
+            )}
+
+            {activeStep === 2 && (
+              <Button
+                size={'sm'}
+                className="text-xs"
+                colorScheme="green"
+                fontWeight="100"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            )}
+
+            <Button
+              size={'sm'}
+              className="text-xs"
+              colorScheme="gray"
+              onClick={handlePreview}
+            >
+              Preview
+            </Button>
+          </HStack>
+        </div>
+
+        {/* Preview Modal */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Form Preview</ModalHeader>
+            <ModalBody>
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>Field</Th>
+                    <Th>Value</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td>Bank Account ID</Td>
+                    <Td>{formData.bankAccountId || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Full Name</Td>
+                    <Td>{formData.fullName || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Date of Birth</Td>
+                    <Td>{formData.dob || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Address</Td>
+                    <Td>{formData.address || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Contact Number</Td>
+                    <Td>{formData.contactNumber || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Aadhar Number</Td>
+                    <Td>{formData.aadharNumber || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>PAN Card Number</Td>
+                    <Td>{formData.panCardNumber || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Email</Td>
+                    <Td>{formData.email || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Monthly Income</Td>
+                    <Td>{formData.monthlyIncome || ''}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Product</Td>
+                    <Td>{formData.product || ''}</Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" onClick={onClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </div>
+    </div>
   );
 };
 
-export default DataPreview;
+export default FormPage;
