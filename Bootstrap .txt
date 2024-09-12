@@ -1,117 +1,103 @@
-package com.scb.axessspringboottraining.Uitest.Service;
+public class CustomerDataDto {
 
-import com.scb.axessspringboottraining.Entities.Application;
-import com.scb.axessspringboottraining.Entities.Customer;
-import com.scb.axessspringboottraining.Uitest.Interface.CreditApplicationRepository;
-import com.scb.axessspringboottraining.Uitest.Interface.ICustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+    private Long customerId;
+    private String fullName;
+    private String dob;
+    private String address;
+    private String contactNumber;
+    private String aadharNumber;
+    private String panCardNumber;
+    private String email;
+    private String monthlyIncome;
+    private String product;
+    private String customerType;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-
-@Service
-public class CreditApplicationService {
-
-    @Autowired
-    private ICustomerRepository customerRepository;
-
-    @Autowired
-    private CreditApplicationRepository creditApplicationRepository;
-
-    private static final AtomicInteger applicationNumberSequence = new AtomicInteger(1);
-
-    public void processCustomerData(CustomerDataDto customerData) {
-        Customer customer = new Customer();
-        String productType = customerData.getProduct();
-        String customerType = customerData.getCustomerType();
-
-        customer.setCustomerId(customerData.getCustomerId() != null ? customerData.getCustomerId() : generateCustomerId());
-        customer.setName(customerData.getFullName());
-        customer.setDob(parseDate(customerData.getDob()));
-        customer.setAddress(customerData.getAddress());
-        customer.setContact(customerData.getContactNumber());
-        customer.setEmail(customerData.getEmail());
-        customer.setAdhaarNumber(customerData.getAadharNumber());
-        customer.setPanNumber(customerData.getPanCardNumber());
-        customer.setMonthlyIncome(parseNumeric(customerData.getMonthlyIncome()));
-        customer.setCreationDate(LocalDateTime.now());
-
-        if (customerData.getCustomerId() == null) {
-            // New customer
-            customerRepository.save(customer);
-
-            // Create new credit application
-            Application creditApplication = new Application();
-            creditApplication.setApplicationNumber(generateApplicationNumber());
-            creditApplication.setCustomer(customer);
-            creditApplication.setProductId(productType);
-            creditApplication.setApplicationCreationDate(LocalDateTime.now());
-            creditApplication.setApplicationStatus("Verification Pending");
-            creditApplicationRepository.save(creditApplication);
-        } else {
-            // Existing customer
-            Optional<Customer> existingCustomerOpt = customerRepository.findById(customer.getCustomerId());
-            if (existingCustomerOpt.isPresent()) {
-                Customer existingCustomer = existingCustomerOpt.get();
-                updateCustomerDetails(existingCustomer, customer);
-                customerRepository.save(existingCustomer);
-
-                // Create new credit application
-                Application creditApplication = new Application();
-                creditApplication.setApplicationNumber(generateApplicationNumber());
-                creditApplication.setCustomer(existingCustomer);
-                creditApplication.setProductId(productType);
-                creditApplication.setApplicationCreationDate(LocalDateTime.now());
-                creditApplication.setApplicationStatus("Verification Pending");
-                creditApplicationRepository.save(creditApplication);
-            } else {
-                throw new RuntimeException("Existing customer not found!");
-            }
-        }
+    // Getters and Setters
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    // Helper method to parse and convert date string to LocalDate
-    private LocalDate parseDate(String dateString) {
-        try {
-            return LocalDate.parse(dateString);
-        } catch (DateTimeException e) {
-            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
-        }
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
-    // Helper method to parse and convert numeric string to Double
-    private double parseNumeric(String numberString) {
-        try {
-            return Double.parseDouble(numberString);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid numeric format: " + numberString, e);
-        }
+    public String getFullName() {
+        return fullName;
     }
 
-    // Generate a new unique customerId
-    private Long generateCustomerId() {
-        return (long) (Math.random() * 1000000); // Generates a 6-digit number
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    // Generate a new unique application number
-    private String generateApplicationNumber() {
-        int sequence = applicationNumberSequence.getAndIncrement();
-        return String.format("IN%1$td%1$tm%1$tY%05d", LocalDate.now(), sequence);
+    public String getDob() {
+        return dob;
     }
 
-    // Update existing customer details with new data
-    private void updateCustomerDetails(Customer existingCustomer, Customer newCustomer) {
-        existingCustomer.setName(newCustomer.getName());
-        existingCustomer.setDob(newCustomer.getDob());
-        existingCustomer.setAddress(newCustomer.getAddress());
-        existingCustomer.setContact(newCustomer.getContact());
-        existingCustomer.setEmail(newCustomer.getEmail());
-        existingCustomer.setAdhaarNumber(newCustomer.getAdhaarNumber());
-        existingCustomer.setPanNumber(newCustomer.getPanNumber());
-        existingCustomer.setMonthlyIncome(newCustomer.getMonthlyIncome());
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(String aadharNumber) {
+        this.aadharNumber = aadharNumber;
+    }
+
+    public String getPanCardNumber() {
+        return panCardNumber;
+    }
+
+    public void setPanCardNumber(String panCardNumber) {
+        this.panCardNumber = panCardNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(String monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public String getCustomerType() {
+        return customerType;
+    }
+
+    public void setCustomerType(String customerType) {
+        this.customerType = customerType;
     }
 }
