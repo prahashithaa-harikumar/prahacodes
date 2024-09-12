@@ -1,127 +1,26 @@
+package com.scb.axessspringboottraining.Uitest.Controller;
+
+import com.scb.axessspringboottraining.Uitest.Service.CreditApplicationService;
+import com.scb.axessspringboottraining.Uitest.Service.CustomerDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Optional;
-
-@Service
-public class CreditApplicationService {
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CreditApplicationService creditApplicationService;
 
-    @Autowired
-    private CreditApplicationRepository creditApplicationRepository;
-
-    private final String FILE_PATH = "path/to/your/textfile.txt";  // Hardcoded file path
-
-    public void processTextFile() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            Customer customer = new Customer();
-            String productType = "";
-            String customerType = "";
-
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(": ");
-                if (parts.length == 2) {
-                    switch (parts[0].trim()) {
-                        case "Customer Type":
-                            customerType = parts[1].trim();
-                            break;
-                        case "Full Name":
-                            customer.setFullName(parts[1].trim());
-                            break;
-                        case "Bank Account ID":
-                            customer.setBankAccountId(parts[1].trim());
-                            break;
-                        case "Date of Birth":
-                            customer.setDob(parseDate(parts[1].trim()));
-                            break;
-                        case "Address":
-                            customer.setAddress(parts[1].trim());
-                            break;
-                        case "Contact Number":
-                            customer.setContactNumber(parts[1].trim());
-                            break;
-                        case "Aadhar Number":
-                            customer.setAadharNumber(parts[1].trim());
-                            break;
-                        case "PAN Card Number":
-                            customer.setPanCardNumber(parts[1].trim());
-                            break;
-                        case "Email":
-                            customer.setEmail(parts[1].trim());
-                            break;
-                        case "Monthly Income":
-                            customer.setMonthlyIncome(parseNumeric(parts[1].trim()));
-                            break;
-                        case "Product":
-                            productType = parts[1].trim();
-                            break;
-                    }
-                }
-            }
-
-            if (customerType.equalsIgnoreCase("new")) {
-                customer.setBankAccountId(generateBankAccountId());  // Generate new bank ID
-                customerRepository.save(customer);  // Add the new customer
-            } else {
-                Optional<Customer> existingCustomer = customerRepository.findById(customer.getBankAccountId());
-                if (existingCustomer.isPresent()) {
-                    Customer updatedCustomer = existingCustomer.get();
-                    updateCustomerDetails(updatedCustomer, customer);
-                    customerRepository.save(updatedCustomer);  // Update existing customer
-                } else {
-                    throw new RuntimeException("Existing customer not found!");
-                }
-            }
-
-            // Create new credit application
-            CreditApplication creditApplication = new CreditApplication();
-            creditApplication.setBankAccountId(customer.getBankAccountId());
-            creditApplication.setProductType(productType);
-            creditApplication.setSubmissionDate(LocalDate.now());  // Set the current date
-            creditApplicationRepository.save(creditApplication);  // Save the credit application
-        }
-    }
-
-    // Helper method to parse and convert date string to LocalDate
-    private LocalDate parseDate(String dateString) {
+    @PostMapping("/submit")
+    public ResponseEntity<String> submitCustomerData(@RequestBody CustomerDataDto customerData) {
         try {
-            return LocalDate.parse(dateString);  // Assumes date format is YYYY-MM-DD
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
+            creditApplicationService.processCustomerData(customerData);
+            return new ResponseEntity<>("Data processed successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error processing data: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    // Helper method to parse and convert numeric string to double
-    private double parseNumeric(String numberString) {
-        try {
-            return Double.parseDouble(numberString);  // Assumes valid numeric format
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid numeric format: " + numberString, e);
-        }
-    }
-
-    // Generate a new unique bankAccountId
-    private String generateBankAccountId() {
-        return "IN" + String.format("%014d", (long) (Math.random() * 10000000000000L));
-    }
-
-    // Update existing customer details with new data
-    private void updateCustomerDetails(Customer existingCustomer, Customer newCustomer) {
-        existingCustomer.setFullName(newCustomer.getFullName());
-        existingCustomer.setDob(newCustomer.getDob());
-        existingCustomer.setAddress(newCustomer.getAddress());
-        existingCustomer.setContactNumber(newCustomer.getContactNumber());
-        existingCustomer.setAadharNumber(newCustomer.getAadharNumber());
-        existingCustomer.setPanCardNumber(newCustomer.getPanCardNumber());
-        existingCustomer.setEmail(newCustomer.getEmail());
-        existingCustomer.setMonthlyIncome(newCustomer.getMonthlyIncome());
     }
 }
