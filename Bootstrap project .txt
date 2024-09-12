@@ -1,50 +1,17 @@
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
+@RestController
+@RequestMapping("/api/project/credit-applications")
+public class CreditApplicationController {
 
-@Entity
-public class CreditApplication {
+    @Autowired
+    private CreditApplicationService creditApplicationService;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long applicationId;  // Auto-generated 6-digit application ID
-
-    private String bankAccountId;
-    private String productType;
-    private LocalDate submissionDate;  // Date when the application was submitted
-
-    // Getters and Setters
-    public Long getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(Long applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public String getBankAccountId() {
-        return bankAccountId;
-    }
-
-    public void setBankAccountId(String bankAccountId) {
-        this.bankAccountId = bankAccountId;
-    }
-
-    public String getProductType() {
-        return productType;
-    }
-
-    public void setProductType(String productType) {
-        this.productType = productType;
-    }
-
-    public LocalDate getSubmissionDate() {
-        return submissionDate;
-    }
-
-    public void setSubmissionDate(LocalDate submissionDate) {
-        this.submissionDate = submissionDate;
+    @PostMapping("/process")
+    public ResponseEntity<String> processCustomerApplication(@RequestBody CustomerDataDto customerDataDto) {
+        try {
+            creditApplicationService.processCustomerData(customerDataDto);
+            return ResponseEntity.ok("Application processed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing application: " + e.getMessage());
+        }
     }
 }
