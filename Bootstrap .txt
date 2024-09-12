@@ -1,17 +1,117 @@
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+package com.scb.axessspringboottraining.Uitest.Service;
 
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
+import com.scb.axessspringboottraining.Entities.Application;
+import com.scb.axessspringboottraining.Entities.Customer;
+import com.scb.axessspringboottraining.Uitest.Interface.CreditApplicationRepository;
+import com.scb.axessspringboottraining.Uitest.Interface.ICustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://127.0.0.1:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+@Service
+public class CreditApplicationService {
+
+    @Autowired
+    private ICustomerRepository customerRepository;
+
+    @Autowired
+    private CreditApplicationRepository creditApplicationRepository;
+
+    private static final AtomicInteger applicationNumberSequence = new AtomicInteger(1);
+
+    public void processCustomerData(CustomerDataDto customerData) {
+        Customer customer = new Customer();
+        String productType = customerData.getProduct();
+        String customerType = customerData.getCustomerType();
+
+        customer.setCustomerId(customerData.getCustomerId() != null ? customerData.getCustomerId() : generateCustomerId());
+        customer.setName(customerData.getFullName());
+        customer.setDob(parseDate(customerData.getDob()));
+        customer.setAddress(customerData.getAddress());
+        customer.setContact(customerData.getContactNumber());
+        customer.setEmail(customerData.getEmail());
+        customer.setAdhaarNumber(customerData.getAadharNumber());
+        customer.setPanNumber(customerData.getPanCardNumber());
+        customer.setMonthlyIncome(parseNumeric(customerData.getMonthlyIncome()));
+        customer.setCreationDate(LocalDateTime.now());
+
+        if (customerData.getCustomerId() == null) {
+            // New customer
+            customerRepository.save(customer);
+
+            // Create new credit application
+            Application creditApplication = new Application();
+            creditApplication.setApplicationNumber(generateApplicationNumber());
+            creditApplication.setCustomer(customer);
+            creditApplication.setProductId(productType);
+            creditApplication.setApplicationCreationDate(LocalDateTime.now());
+            creditApplication.setApplicationStatus("Verification Pending");
+            creditApplicationRepository.save(creditApplication);
+        } else {
+            // Existing customer
+            Optional<Customer> existingCustomerOpt = customerRepository.findById(customer.getCustomerId());
+            if (existingCustomerOpt.isPresent()) {
+                Customer existingCustomer = existingCustomerOpt.get();
+                updateCustomerDetails(existingCustomer, customer);
+                customerRepository.save(existingCustomer);
+
+                // Create new credit application
+                Application creditApplication = new Application();
+                creditApplication.setApplicationNumber(generateApplicationNumber());
+                creditApplication.setCustomer(existingCustomer);
+                creditApplication.setProductId(productType);
+                creditApplication.setApplicationCreationDate(LocalDateTime.now());
+                creditApplication.setApplicationStatus("Verification Pending");
+                creditApplicationRepository.save(creditApplication);
+            } else {
+                throw new RuntimeException("Existing customer not found!");
+            }
+        }
+    }
+
+    // Helper method to parse and convert date string to LocalDate
+    private LocalDate parseDate(String dateString) {
+        try {
+            return LocalDate.parse(dateString);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
+        }
+    }
+
+    // Helper method to parse and convert numeric string to Double
+    private double parseNumeric(String numberString) {
+        try {
+            return Double.parseDouble(numberString);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid numeric format: " + numberString, e);
+        }
+    }
+
+    // Generate a new unique customerId
+    private Long generateCustomerId() {
+        return (long) (Math.random() * 1000000); // Generates a 6-digit number
+    }
+
+    // Generate a new unique application number
+    private String generateApplicationNumber() {
+        int sequence = applicationNumberSequence.getAndIncrement();
+        return String.format("IN%1$td%1$tm%1$tY%05d", LocalDate.now(), sequence);
+    }
+
+    // Update existing customer details with new data
+    private void updateCustomerDetails(Customer existingCustomer, Customer newCustomer) {
+        existingCustomer.setName(newCustomer.getName());
+        existingCustomer.setDob(newCustomer.getDob());
+        existingCustomer.setAddress(newCustomer.getAddress());
+        existingCustomer.setContact(newCustomer.getContact());
+        existingCustomer.setEmail(newCustomer.getEmail());
+        existingCustomer.setAdhaarNumber(newCustomer.getAdhaarNumber());
+        existingCustomer.setPanNumber(newCustomer.getPanNumber());
+        existingCustomer.setMonthlyIncome(newCustomer.getMonthlyIncome());
     }
 }
