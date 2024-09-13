@@ -1,17 +1,9 @@
-package com.example.demo.service;
+-- Insert for Silver product
+INSERT INTO Product (product_id, usage, affiliation, card_type, card_limit, transfer_amount, valid_upto, balance_transfer, effective_rate) 
+VALUES 
+('Silver', 'General Usage', 'RuPay', 'Credit Card', '50,000 INR', '10,000 INR', '2 years', 'Yes', '1.5%');
 
-import com.example.demo.model.Product;
-import com.example.demo.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class ProductService {
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    public Product getProductById(String productId) {
-        return productRepository.findById(productId).orElse(null);
-    }
-}
+-- Insert for Gold product
+INSERT INTO Product (product_id, usage, affiliation, card_type, card_limit, transfer_amount, valid_upto, balance_transfer, effective_rate) 
+VALUES 
+('Gold', 'Premium Usage', 'VISA', 'Credit Card', '1,00,000 INR', '20,000 INR', '3 years', 'Yes', '1.2%');
