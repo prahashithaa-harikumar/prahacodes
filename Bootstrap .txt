@@ -1,103 +1,129 @@
-public class CustomerDataDto {
+import React, { useState } from "react";
+import {
+  FormControl,
+  FormLabel,
+  Select,
+  Input,
+  Spinner,
+  VStack,
+  Text,
+} from "@chakra-ui/react";
+import axios from "axios"; // Make sure to install axios
 
-    private Long customerId;
-    private String fullName;
-    private String dob;
-    private String address;
-    private String contactNumber;
-    private String aadharNumber;
-    private String panCardNumber;
-    private String email;
-    private String monthlyIncome;
-    private String product;
-    private String customerType;
+const CreditForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const [productDetails, setProductDetails] = useState(null);
+  const [formData, setFormData] = useState({
+    productid: "",
+    usage: "",
+    affiliation: "",
+    card_type: "",
+    card_limit: "",
+    transfer_amount: "",
+    valid_upto: "",
+    balance_transfer: "",
+    effective_rate: "",
+  });
 
-    // Getters and Setters
-    public Long getCustomerId() {
-        return customerId;
+  // Handle product selection
+  const handleProductChange = async (e) => {
+    const selectedProductId = e.target.value;
+    setSelectedProductId(selectedProductId);
+
+    // Fetch product details from backend API
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`/api/product/${selectedProductId}`);
+      setProductDetails(response.data);
+      setFormData({
+        productid: response.data.productid,
+        usage: response.data.usage,
+        affiliation: response.data.affiliation,
+        card_type: response.data.card_type,
+        card_limit: response.data.card_limit,
+        transfer_amount: response.data.transfer_amount,
+        valid_upto: response.data.valid_upto,
+        balance_transfer: response.data.balance_transfer,
+        effective_rate: response.data.effective_rate,
+      });
+    } catch (error) {
+      console.error("Error fetching product details", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
+  return (
+    <VStack spacing={4}>
+      {/* Dropdown to select product */}
+      <FormControl id="product">
+        <FormLabel>Product</FormLabel>
+        <Select placeholder="Select product" onChange={handleProductChange}>
+          <option value="silver">Silver</option>
+          <option value="gold">Gold</option>
+          <option value="platinum">Platinum</option>
+        </Select>
+      </FormControl>
 
-    public String getFullName() {
-        return fullName;
-    }
+      {/* Show Spinner while loading */}
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        productDetails && (
+          <>
+            {/* Usage Field */}
+            <FormControl id="usage">
+              <FormLabel>Usage</FormLabel>
+              <Input value={formData.usage || ""} readOnly />
+            </FormControl>
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+            {/* Affiliation Field */}
+            <FormControl id="affiliation">
+              <FormLabel>Affiliation</FormLabel>
+              <Input value={formData.affiliation || ""} readOnly />
+            </FormControl>
 
-    public String getDob() {
-        return dob;
-    }
+            {/* Card Type Field */}
+            <FormControl id="card_type">
+              <FormLabel>Card Type</FormLabel>
+              <Input value={formData.card_type || ""} readOnly />
+            </FormControl>
 
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
+            {/* Card Limit Field */}
+            <FormControl id="card_limit">
+              <FormLabel>Card Limit</FormLabel>
+              <Input value={formData.card_limit || ""} readOnly />
+            </FormControl>
 
-    public String getAddress() {
-        return address;
-    }
+            {/* Transfer Amount Field */}
+            <FormControl id="transfer_amount">
+              <FormLabel>Transfer Amount</FormLabel>
+              <Input value={formData.transfer_amount || ""} readOnly />
+            </FormControl>
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+            {/* Valid Upto Field */}
+            <FormControl id="valid_upto">
+              <FormLabel>Valid Upto</FormLabel>
+              <Input value={formData.valid_upto || ""} readOnly />
+            </FormControl>
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
+            {/* Balance Transfer Field */}
+            <FormControl id="balance_transfer">
+              <FormLabel>Balance Transfer</FormLabel>
+              <Input value={formData.balance_transfer || ""} readOnly />
+            </FormControl>
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+            {/* Effective Rate Field */}
+            <FormControl id="effective_rate">
+              <FormLabel>Effective Rate</FormLabel>
+              <Input value={formData.effective_rate || ""} readOnly />
+            </FormControl>
+          </>
+        )
+      )}
+    </VStack>
+  );
+};
 
-    public String getAadharNumber() {
-        return aadharNumber;
-    }
-
-    public void setAadharNumber(String aadharNumber) {
-        this.aadharNumber = aadharNumber;
-    }
-
-    public String getPanCardNumber() {
-        return panCardNumber;
-    }
-
-    public void setPanCardNumber(String panCardNumber) {
-        this.panCardNumber = panCardNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMonthlyIncome() {
-        return monthlyIncome;
-    }
-
-    public void setMonthlyIncome(String monthlyIncome) {
-        this.monthlyIncome = monthlyIncome;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public void setProduct(String product) {
-        this.product = product;
-    }
-
-    public String getCustomerType() {
-        return customerType;
-    }
-
-    public void setCustomerType(String customerType) {
-        this.customerType = customerType;
-    }
-}
+export default CreditForm;
