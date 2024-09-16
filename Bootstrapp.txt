@@ -1,92 +1,16 @@
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Optional;
-
-@Service
-public class CreditApplicationService {
+@RestController
+public class CustomerController {
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerService customerService;
 
-    @Autowired
-    private CreditApplicationRepository creditApplicationRepository;
-
-    private final String FILE_PATH = "path/to/your/textfile.txt";  // Hardcoded file path
-
-    public void processTextFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
-        String line;
-        Customer customer = new Customer();
-        String productType = "";
-        String customerType = "";
-
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(": ");
-            switch (parts[0].trim()) {
-                case "Customer Type":
-                    customerType = parts[1].trim();
-                    break;
-                case "Full Name":
-                    customer.setFullName(parts[1].trim());
-                    break;
-                case "Bank Account ID":
-                    customer.setBankAccountId(parts[1].trim());
-                    break;
-                case "Date of Birth":
-                    customer.setDob(parts[1].trim());
-                    break;
-                case "Address":
-                    customer.setAddress(parts[1].trim());
-                    break;
-                case "Contact Number":
-                    customer.setContactNumber(parts[1].trim());
-                    break;
-                case "Aadhar Number":
-                    customer.setAadharNumber(parts[1].trim());
-                    break;
-                case "PAN Card Number":
-                    customer.setPanCardNumber(parts[1].trim());
-                    break;
-                case "Email":
-                    customer.setEmail(parts[1].trim());
-                    break;
-                case "Monthly Income":
-                    customer.setMonthlyIncome(parts[1].trim());
-                    break;
-                case "Product":
-                    productType = parts[1].trim();
-                    break;
-            }
-        }
-        reader.close();
-
-        if (customerType.equalsIgnoreCase("new")) {
-            customer.setBankAccountId(generateBankAccountId());  // Generate new bank ID
-            customerRepository.save(customer);  // Add the new customer
-        } else {
-            Optional<Customer> existingCustomer = customerRepository.findById(customer.getBankAccountId());
-            if (existingCustomer.isPresent()) {
-                customerRepository.save(customer);  // Update existing customer
-            } else {
-                throw new RuntimeException("Existing customer not found!");
-            }
-        }
-
-        // Create new credit application
-        CreditApplication creditApplication = new CreditApplication();
-        creditApplication.setBankAccountId(customer.getBankAccountId());
-        creditApplication.setProductType(productType);
-        creditApplication.setSubmissionDate(LocalDate.now());  // Set the current date
-        creditApplicationRepository.save(creditApplication);  // Save the credit application
-    }
-
-    // Helper method to generate a new bankAccountId
-    private String generateBankAccountId() {
-        return "IN" + String.valueOf((long) (Math.random() * 100000000000000L));
+    @GetMapping("/customerid/{id}")
+    public CustomerDTO getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id);
     }
 }
