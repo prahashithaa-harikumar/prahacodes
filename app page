@@ -1,13 +1,26 @@
-import React from 'react';
-import CustomerApplicationForm from './CustomerApplicationForm';
-import './index.css'; // Make sure this is included to apply Tailwind styles
+// CustomerController.java
+package com.scb.axessspringboottraining.controllers;
 
-function App() {
-  return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <CustomerApplicationForm />
-    </div>
-  );
+import com.scb.axessspringboottraining.entities.Customer;
+import com.scb.axessspringboottraining.services.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+
+    @Autowired
+    private CustomerService customerService;
+
+    @GetMapping("/{customerId}")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer != null) {
+            return ResponseEntity.ok(customer);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
-
-export default App;
