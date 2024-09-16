@@ -1,96 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { VStack, Table, TableContainer, Tbody, Tr, Td, Spinner, Box, Container } from "@chakra-ui/react";
-import { getCustomerDetails } from './customerService'; // Import the service
-
-const CustomerView = ({ custId }) => {
-  const [customer, setCustomer] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchCustomerDetails = useCallback(async () => {
+@GetMapping("/customers/{customerId}")
+public ResponseEntity<?> getCustomerById(@PathVariable Long customerId) {
     try {
-      const token = await getToken();  // Assume getToken is defined elsewhere
-      const customerDetails = await getCustomerDetails(token, custId);
-      setCustomer(customerDetails);
-    } catch (err) {
-      console.error(err.message);
-    } finally {
-      setLoading(false);
+        // Try to fetch the customer by ID
+        Customer customer = customerService.getCustomerById(customerId);
+        
+        if (customer != null) {
+            // Return the customer details if found
+            return ResponseEntity.ok(customer);
+        } else {
+            // If customer is not found, return a 404 Not Found status
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found with ID: " + customerId);
+        }
+    } catch (Exception e) {
+        // Catch any exceptions and return a 500 Internal Server Error
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
     }
-  }, [custId]);
-
-  useEffect(() => {
-    fetchCustomerDetails();
-  }, [fetchCustomerDetails]);
-
-  if (loading) {
-    return (
-      <Container className="flex justify-center items-center h-full">
-        <Spinner thickness="2px" emptyColor="gray.200" size="md" />
-      </Container>
-    );
-  }
-
-  return (
-    <div className="mt-3 w-full">
-      {customer ? (
-        <VStack spacing={4} align="start">
-          <TableContainer>
-            <Table variant="simple" size="sm">
-              <Tbody>
-                <Tr>
-                  <Td fontWeight="semibold">Customer ID</Td>
-                  <Td>:</Td>
-                  <Td>{customer.customerId}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Full Name</Td>
-                  <Td>:</Td>
-                  <Td>{customer.name}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Date of Birth</Td>
-                  <Td>:</Td>
-                  <Td>{customer.dob}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Address</Td>
-                  <Td>:</Td>
-                  <Td>{customer.address}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Email</Td>
-                  <Td>:</Td>
-                  <Td>{customer.email}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Contact</Td>
-                  <Td>:</Td>
-                  <Td>{customer.contact}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Adhaar Number</Td>
-                  <Td>:</Td>
-                  <Td>{customer.adhaarNumber}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">PAN Number</Td>
-                  <Td>:</Td>
-                  <Td>{customer.panNumber}</Td>
-                </Tr>
-                <Tr>
-                  <Td fontWeight="semibold">Monthly Income</Td>
-                  <Td>:</Td>
-                  <Td>{customer.monthlyIncome}</Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </VStack>
-      ) : (
-        <Box>No Customer Found</Box>
-      )}
-    </div>
-  );
-};
-
-export default CustomerView;
+}
