@@ -1,28 +1,18 @@
-public class CustomerDTO {
-
-    private Long customerId;
-    private String name;
-    private String dateOfBirth;
-    private String address;
-    private String email;
-    private String contact;
-    private String adhaarNumber;
-    private String panNumber;
-    private Double monthlyIncome;
-
-    // Constructor
-    public CustomerDTO(Long customerId, String name, String dateOfBirth, String address, String email, String contact,
-                       String adhaarNumber, String panNumber, Double monthlyIncome) {
-        this.customerId = customerId;
-        this.name = name;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-        this.email = email;
-        this.contact = contact;
-        this.adhaarNumber = adhaarNumber;
-        this.panNumber = panNumber;
-        this.monthlyIncome = monthlyIncome;
+@GetMapping("/customers/{customerId}")
+public ResponseEntity<?> getCustomerById(@PathVariable Long customerId) {
+    try {
+        // Try to fetch the customer by ID
+        Customer customer = customerService.getCustomerById(customerId);
+        
+        if (customer != null) {
+            // Return the customer details if found
+            return ResponseEntity.ok(customer);
+        } else {
+            // If customer is not found, return a 404 Not Found status
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found with ID: " + customerId);
+        }
+    } catch (Exception e) {
+        // Catch any exceptions and return a 500 Internal Server Error
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
     }
-
-    // Getters and Setters
 }
