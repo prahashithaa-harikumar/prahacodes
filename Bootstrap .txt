@@ -1,18 +1,13 @@
-@GetMapping("/customers/{customerId}")
-public ResponseEntity<?> getCustomerById(@PathVariable Long customerId) {
-    try {
-        // Try to fetch the customer by ID
-        Customer customer = customerService.getCustomerById(customerId);
-        
-        if (customer != null) {
-            // Return the customer details if found
-            return ResponseEntity.ok(customer);
-        } else {
-            // If customer is not found, return a 404 Not Found status
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found with ID: " + customerId);
-        }
-    } catch (Exception e) {
-        // Catch any exceptions and return a 500 Internal Server Error
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-    }
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
+    @Query("SELECT new com.example.demo.CustomerDTO(c.customerId, c.name, c.dateOfBirth, c.address, c.email, c.contact, " +
+            "c.adhaarNumber, c.panNumber, c.monthlyIncome) " +
+            "FROM Customer c WHERE c.customerId = :customerId")
+    Optional<CustomerDTO> findCustomerDetailsById(@Param("customerId") Long customerId);
 }
