@@ -1,10 +1,9 @@
-// CustomerService.java
-package com.scb.axessspringboottraining.services;
-
-import com.scb.axessspringboottraining.entities.Customer;
-import com.scb.axessspringboottraining.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -12,7 +11,24 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public Customer getCustomerById(Long customerId) {
-        return customerRepository.findById(customerId).orElse(null);
+    public Map<String, Object> getCustomerById(Long customerId) {
+        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("customerId", customer.getCustomerId());
+            response.put("name", customer.getName());
+            response.put("dateOfBirth", customer.getDateOfBirth());
+            response.put("address", customer.getAddress());
+            response.put("email", customer.getEmail());
+            response.put("contact", customer.getContact());
+            response.put("adhaarNumber", customer.getAdhaarNumber());
+            response.put("panNumber", customer.getPanNumber());
+            response.put("monthlyIncome", customer.getMonthlyIncome());
+            return response;
+        } else {
+            return null; // or throw an exception
+        }
     }
 }
