@@ -1,9 +1,15 @@
-@GetMapping("/customers/{customerId}")
-public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
-    Customer customer = customerService.getCustomerById(customerId);
-    if (customer != null) {
-        return ResponseEntity.ok(customer);
-    } else {
-        return ResponseEntity.notFound().build();  // Returns 404 with no body
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class CustomerService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    public Optional<CustomerDTO> getCustomerById(Long customerId) {
+        return customerRepository.findCustomerDetailsById(customerId);
     }
 }
