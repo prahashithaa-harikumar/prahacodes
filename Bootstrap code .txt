@@ -1,11 +1,9 @@
-limport org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.repository.CrudRepository;
-
-public interface CustomerRepository extends CrudRepository<Customer, Long> {
-
-    @Query("SELECT new com.example.demo.CustomerDTO(c.customerId, c.name, c.dateOfBirth, c.address, c.email, c.contact, " +
-            "c.adhaarNumber, c.panNumber, c.monthlyIncome) " +
-            "FROM Customer c WHERE c.customerId = :customerId")
-    CustomerDTO findCustomerDetailsById(@Param("customerId") Long customerId);
+@GetMapping("/customers/{customerId}")
+public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
+    Customer customer = customerService.getCustomerById(customerId);
+    if (customer != null) {
+        return ResponseEntity.ok(customer);
+    } else {
+        return ResponseEntity.notFound().build();  // Returns 404 with no body
+    }
 }
