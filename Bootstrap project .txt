@@ -5,10 +5,7 @@ import axios from "axios";
 const CreditForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
-  
-  // State for form data (saving product type and other fetched data)
-  const [formData, setFormData] = useState({
-    product: "", // Added product field
+  const [displayData, setDisplayData] = useState({
     usage: "",
     affiliation: "",
     card_type: "",
@@ -19,20 +16,24 @@ const CreditForm = () => {
     effective_rate: "",
   });
 
+  const [formData, setFormData] = useState({
+    product: "", // Only saving product type
+  });
+
   // Handle product selection
   const handleProductChange = async (e) => {
-    const selectedProductId = e.target.value; // Capture the selected product ID
-    setSelectedProductId(selectedProductId); // Update state with the selected product ID
+    const selectedProductId = e.target.value;
+    setSelectedProductId(selectedProductId);
+    setFormData({ product: selectedProductId }); // Only save product type for form submission
 
     setIsLoading(true); // Show spinner while loading
 
     try {
-      // Send selected product ID to the backend and fetch product details
+      // Fetch product details from the backend
       const response = await axios.get(`http://localhost:8080/api/project/product/${selectedProductId}`);
       
-      // Update form data with the response and include the product type
-      setFormData({
-        product: selectedProductId, // Save the selected product type
+      // Update the display data with fetched product details
+      setDisplayData({
         usage: response.data.usage,
         affiliation: response.data.affiliation,
         card_type: response.data.card_type,
@@ -49,8 +50,17 @@ const CreditForm = () => {
     }
   };
 
+  // Handle form submission (only submitting the product type)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted with product type:", formData.product);
+    
+    // You can make a POST request or handle the form submission logic here
+    // axios.post('/api/project/submit', formData);
+  };
+
   return (
-    <VStack spacing={4}>
+    <VStack spacing={4} as="form" onSubmit={handleSubmit}>
       {/* Dropdown to select product */}
       <FormControl id="product">
         <FormLabel>Product</FormLabel>
@@ -66,61 +76,53 @@ const CreditForm = () => {
         <Spinner />
       ) : (
         <>
-          {/* Product Type Field */}
-          <FormControl id="product-type">
-            <FormLabel>Product Type</FormLabel>
-            <Input value={formData.product || ""} readOnly />
-          </FormControl>
-
-          {/* Usage Field */}
+          {/* Display product details */}
           <FormControl id="usage">
             <FormLabel>Usage</FormLabel>
-            <Input value={formData.usage || ""} readOnly />
+            <Input value={displayData.usage || ""} readOnly />
           </FormControl>
 
-          {/* Affiliation Field */}
           <FormControl id="affiliation">
             <FormLabel>Affiliation</FormLabel>
-            <Input value={formData.affiliation || ""} readOnly />
+            <Input value={displayData.affiliation || ""} readOnly />
           </FormControl>
 
-          {/* Card Type Field */}
           <FormControl id="card_type">
             <FormLabel>Card Type</FormLabel>
-            <Input value={formData.card_type || ""} readOnly />
+            <Input value={displayData.card_type || ""} readOnly />
           </FormControl>
 
-          {/* Card Limit Field */}
           <FormControl id="card_limit">
             <FormLabel>Card Limit</FormLabel>
-            <Input value={formData.card_limit || ""} readOnly />
+            <Input value={displayData.card_limit || ""} readOnly />
           </FormControl>
 
-          {/* Transfer Amount Field */}
           <FormControl id="transfer_amount">
             <FormLabel>Transfer Amount</FormLabel>
-            <Input value={formData.transfer_amount || ""} readOnly />
+            <Input value={displayData.transfer_amount || ""} readOnly />
           </FormControl>
 
-          {/* Valid Upto Field */}
           <FormControl id="valid_upto">
             <FormLabel>Valid Upto</FormLabel>
-            <Input value={formData.valid_upto || ""} readOnly />
+            <Input value={displayData.valid_upto || ""} readOnly />
           </FormControl>
 
-          {/* Balance Transfer Field */}
           <FormControl id="balance_transfer">
             <FormLabel>Balance Transfer</FormLabel>
-            <Input value={formData.balance_transfer || ""} readOnly />
+            <Input value={displayData.balance_transfer || ""} readOnly />
           </FormControl>
 
-          {/* Effective Rate Field */}
           <FormControl id="effective_rate">
             <FormLabel>Effective Rate</FormLabel>
-            <Input value={formData.effective_rate || ""} readOnly />
+            <Input value={displayData.effective_rate || ""} readOnly />
           </FormControl>
         </>
       )}
+
+      {/* Submit button */}
+      <Button type="submit" colorScheme="teal">
+        Save Product Type
+      </Button>
     </VStack>
   );
 };
