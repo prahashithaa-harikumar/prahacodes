@@ -1,18 +1,96 @@
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import React, { useState, useEffect, useCallback } from 'react';
+import { VStack, Table, TableContainer, Tbody, Tr, Td, Spinner, Box, Container } from "@chakra-ui/react";
+import { getCustomerDetails } from './customerService'; // Import the service
 
-import java.util.Optional;
+const CustomerView = ({ custId }) => {
+  const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-@RestController
-public class CustomerController {
-
-    @Autowired
-    private CustomerService customerService;
-
-    @GetMapping("/customerid/{id}")
-    public Optional<CustomerDTO> getCustomerById(@PathVariable Long id) {
-        return customerService.getCustomerById(id);
+  const fetchCustomerDetails = useCallback(async () => {
+    try {
+      const token = await getToken();  // Assume getToken is defined elsewhere
+      const customerDetails = await getCustomerDetails(token, custId);
+      setCustomer(customerDetails);
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      setLoading(false);
     }
-}
+  }, [custId]);
+
+  useEffect(() => {
+    fetchCustomerDetails();
+  }, [fetchCustomerDetails]);
+
+  if (loading) {
+    return (
+      <Container className="flex justify-center items-center h-full">
+        <Spinner thickness="2px" emptyColor="gray.200" size="md" />
+      </Container>
+    );
+  }
+
+  return (
+    <div className="mt-3 w-full">
+      {customer ? (
+        <VStack spacing={4} align="start">
+          <TableContainer>
+            <Table variant="simple" size="sm">
+              <Tbody>
+                <Tr>
+                  <Td fontWeight="semibold">Customer ID</Td>
+                  <Td>:</Td>
+                  <Td>{customer.customerId}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Full Name</Td>
+                  <Td>:</Td>
+                  <Td>{customer.name}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Date of Birth</Td>
+                  <Td>:</Td>
+                  <Td>{customer.dob}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Address</Td>
+                  <Td>:</Td>
+                  <Td>{customer.address}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Email</Td>
+                  <Td>:</Td>
+                  <Td>{customer.email}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Contact</Td>
+                  <Td>:</Td>
+                  <Td>{customer.contact}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Adhaar Number</Td>
+                  <Td>:</Td>
+                  <Td>{customer.adhaarNumber}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">PAN Number</Td>
+                  <Td>:</Td>
+                  <Td>{customer.panNumber}</Td>
+                </Tr>
+                <Tr>
+                  <Td fontWeight="semibold">Monthly Income</Td>
+                  <Td>:</Td>
+                  <Td>{customer.monthlyIncome}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </VStack>
+      ) : (
+        <Box>No Customer Found</Box>
+      )}
+    </div>
+  );
+};
+
+export default CustomerView;
