@@ -1,42 +1,45 @@
+---
+
 **Introduction**
 
-"Good day, everyone! We are the Credit Card Onboarding Team from URSA . My name is Prahashithaa, and I’m here today with my teammates—Sanjay R Krishna, Kavyasri, Harshit, and Sounyayojtu. We’re excited to walk you through our project, detailing the feature implementation and technical highlights
+"Good day, everyone! We are the Credit Card Onboarding Team from URSA. I’m Prahashithaa, here with Sanjay R Krishna, Kavyasri, Harshit, and Sounyayojtu. We're excited to walk you through our project."
 
+---
 
 **Slide 1: Feature Implementation Summary**
 
-". Let’s begin with the feature implementation for Credit card onboarding . We prioritized seven key user stories, all classified as must-haves, except for one. From user login and submission of customer applications, to document handling and initiating credit checks—all critical features have been successfully implemented. We also ensured automated customer notifications and report generation for credit card applications, with the report feature being a good -to-have that we were able to implement."
+"We prioritized seven key user stories for credit card onboarding. From user login and application submission to document handling and credit checks, all critical features have been implemented. Additionally, we integrated automated notifications and report generation as a nice-to-have feature."
 
 ---
 
 **Slide 2: Internal Workflow**
 
-"Next, the internal workflow. It starts with users logging into NGOS, where customer profiles are prescreened to determine if they are existing or new. A credit card application is created, followed by a bureau credit check. Once completed, we retrieve core banking data for offer initiation. Post-approval, identity and income documents are verified before informing third-party systems of the credit card issuance. The process concludes with notifying the customer about their credit card status and shipping it to them."
+"The process begins with user login to NGOS, followed by customer profile prescreening and credit card application creation. After a bureau credit check, core banking data is retrieved to initiate offers. Approved applications go through document verification, with final notifications sent to customers about card issuance and shipping."
 
 ---
 
 **Slide 3: Project Highlights**
 
-"Some project highlights include restricting sales users to only view or edit their own submitted applications, enhancing data privacy. CIBIL scores were mock-generated using the Faker library for realistic test data. We utilized Selenium for automated testing, coupled with unit and manual testing with  a 64% code coverage. Additionally, we built a fail-safe mechanism for credit score retrieval and enabled Excel report extraction for credit applications."
+"Key highlights include restricting sales users’ access to their own applications, mock-generating CIBIL scores with Faker, and using Selenium for automated testing. We also enabled Excel report extraction for applications."
 
 ---
 
 **Slide 4: Technical Implementation Details**
 
-"On the technical side, the front-end was developed using React JS, with Chakra UI and Tailwind CSS, . We implemented 25 REST APIs using Spring Boot. For storage, we employed PostgreSQL, designing 7 tables and executing 16 SQL queries. Development was organized through Azure Boards for user stories and source control managed via Azure Repos and Git."
+"Our front-end was developed using React, Chakra UI, and Tailwind CSS. We built 25 REST APIs using Spring Boot, stored data in PostgreSQL, and managed development via Azure Boards and Git."
 
 ---
 
 **Slide 5: Secure Code Practices**
 
-"Security is a priority throughout this project. We’ve incorporated secure coding practices, including input validation, file encryption, JWT authentication, and password encryption, ensuring a high level of data security and integrity across the platform."
+"Security practices include input validation, file encryption, JWT authentication, and password encryption to ensure data security."
 
 ---
 
-**Slide 6: Challenges, Learning, and Next Steps**
+**Slide 6: Challenges, Learnings, and Next Steps**
 
-"Finally, let’s talk about challenges, learnings, and what’s next. Generating reliable credit scores with limited data and configuring JWT authentication were key hurdles we overcame. Through this, we sharpened skills in React, REST API development, PostgreSQL, and testing with Selenium. Moving forward, we’ll focus on enabling two-step login verification, automated customer email updates, suggesting alternative credit cards, and adding Captcha for added security."
+"Challenges like limited data for credit scores and JWT configuration helped us improve our skills in React, REST APIs, and testing. Next, we aim to add two-step verification, email automation, alternative card suggestions, and Captcha for added security."
 
 ---
 
-"That wraps up the summary. Thanks for your attention!"
+"That wraps up the summary. Thank you!"
