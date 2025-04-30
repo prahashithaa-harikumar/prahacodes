@@ -1,0 +1,118 @@
+import com.jcraft.jsch.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+public class RemoteFileViewer {
+
+    // Map of environment to IP
+    private static final Map<String, String> envIpMap = new HashMap<>();
+
+    static {
+        envIpMap.put("DEV", "192.168.1.10");
+        envIpMap.put("UAT", "192.168.1.11");
+        envIpMap.put("PROD", "192.168.1.12");
+    }
+
+    // Common username and password
+    private static final String USERNAME = "yourUsername";
+    private static final String PASSWORD = "yourPassword";
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Remote File Viewer");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(700, 500);
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            // Environment dropdown
+            JPanel envPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JLabel envLabel = new JLabel("Select Environment: ");
+            JComboBox<String> envCombo = new JComboBox<>(envIpMap.keySet().toArray(new String[0]));
+            envPanel.add(envLabel);
+            envPanel.add(envCombo);
+
+            // File path field
+            JPanel pathPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JLabel pathLabel = new JLabel("File Path: ");
+            JTextField pathField = new JTextField(40);
+            pathPanel.add(pathLabel);
+            pathPanel.add(pathField);
+
+            // Fetch button
+            JButton fetchButton = new JButton("Fetch File");
+
+            // Output area
+            JTextArea outputArea = new JTextArea(20, 60);
+            outputArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(outputArea);
+
+            // Add components to panel
+            panel.add(envPanel);
+            panel.add(pathPanel);
+            panel.add(fetchButton);
+            panel.add(scrollPane);
+
+            // Button action
+            fetchButton.addActionListener(e -> {
+                String env = (String) envCombo.getSelectedItem();
+                String filePath = pathField.getText().trim();
+                if (filePath.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please enter a file path.");
+                    return;
+                }
+
+                String host = envIpMap.get(env);
+                String command = "cat " + filePath;
+
+                outputArea.setText("Connecting to " + env + " (" + host + ")...\n");
+
+                new Thread(() -> {
+                    String output = runSSHCommand(host, USERNAME, PASSWORD, command);
+                    SwingUtilities.invokeLater(() -> outputArea.setText(output));
+                }).start();
+            });
+
+            frame.getContentPane().add(panel);
+            frame.setVisible(true);
+        });
+    }
+
+    // Method to run SSH command
+    public static String runSSHCommand(String host, String user, String password, String command) {
+        StringBuilder result = new StringBuilder();
+        try {
+            JSch jsch = new JSch();
+            Session session = jsch.getSession(user, host, 22);
+            session.setPassword(password);
+
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.connect(10000); // 10 seconds timeout
+
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            channel.setCommand(command);
+            InputStream in = channel.getInputStream();
+            channel.connect();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line).append("\n");
+            }
+
+            channel.disconnect();
+            session.disconnect();
+        } catch (Exception e) {
+            result.append("Error: ").append(e.getMessage()).append("\n");
+        }
+        return result.toString();
+    }
+}
